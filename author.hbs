@@ -1,0 +1,83 @@
+{{!< default}}
+
+{{#author}}
+<section class="px-6 sm:px-10 lg:px-20 py-16 sm:py-24">
+    <div class="mx-auto max-w-content grid grid-cols-1 items-center gap-12 lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-16">
+        <div class="mx-auto lg:mx-0">
+            {{#if profile_image}}
+                <img src="{{img_url profile_image size="l"}}" alt="{{name}}" class="block h-72 w-72 sm:h-80 sm:w-80 rounded-full object-cover">
+            {{else}}
+                <span class="block h-72 w-72 sm:h-80 sm:w-80 rounded-full"
+                      style="background-image: linear-gradient(135deg, var(--color-accent-600) 0%, var(--color-accent-700) 60%, var(--color-accent-900) 100%);" aria-hidden="true"></span>
+            {{/if}}
+        </div>
+
+        <div class="flex flex-col gap-6">
+            {{> eyebrow text="HOST · LOOSE THREADS"}}
+            <h1 class="font-sans text-[44px] sm:text-[64px] lg:text-[72px] font-bold tracking-display leading-[1] m-0" style="color: var(--color-text);">{{name}}</h1>
+            {{#if bio}}
+                <p class="font-serif text-[18px] sm:text-[20px] leading-[165%] m-0" style="color: var(--color-text-body);">{{bio}}</p>
+            {{/if}}
+
+            <div class="flex flex-wrap gap-2 pt-2">
+                {{#if website}}
+                    <a href="{{website}}" target="_blank" rel="noopener" class="pill"><span>{{t "Website"}}</span><span class="pill__arrow" style="color: var(--color-accent);">↗</span></a>
+                {{/if}}
+                {{#if twitter}}
+                    <a href="{{social_url type="twitter"}}" target="_blank" rel="noopener" class="pill"><span>X / Twitter</span><span class="pill__arrow" style="color: var(--color-accent);">↗</span></a>
+                {{/if}}
+                {{#if facebook}}
+                    <a href="{{social_url type="facebook"}}" target="_blank" rel="noopener" class="pill"><span>Facebook</span><span class="pill__arrow" style="color: var(--color-accent);">↗</span></a>
+                {{/if}}
+                {{#if bluesky}}
+                    <a href="{{social_url type="bluesky"}}" target="_blank" rel="noopener" class="pill"><span>Bluesky</span><span class="pill__arrow" style="color: var(--color-accent);">↗</span></a>
+                {{/if}}
+                {{#if mastodon}}
+                    <a href="{{social_url type="mastodon"}}" target="_blank" rel="noopener" class="pill"><span>Mastodon</span><span class="pill__arrow" style="color: var(--color-accent);">↗</span></a>
+                {{/if}}
+                {{#if threads}}
+                    <a href="{{social_url type="threads"}}" target="_blank" rel="noopener" class="pill"><span>Threads</span><span class="pill__arrow" style="color: var(--color-accent);">↗</span></a>
+                {{/if}}
+                {{#if linkedin}}
+                    <a href="{{social_url type="linkedin"}}" target="_blank" rel="noopener" class="pill"><span>LinkedIn</span><span class="pill__arrow" style="color: var(--color-accent);">↗</span></a>
+                {{/if}}
+                {{#if instagram}}
+                    <a href="{{social_url type="instagram"}}" target="_blank" rel="noopener" class="pill"><span>Instagram</span><span class="pill__arrow" style="color: var(--color-accent);">↗</span></a>
+                {{/if}}
+                {{#if youtube}}
+                    <a href="{{social_url type="youtube"}}" target="_blank" rel="noopener" class="pill"><span>YouTube</span><span class="pill__arrow" style="color: var(--color-accent);">↗</span></a>
+                {{/if}}
+                {{#if tiktok}}
+                    <a href="{{social_url type="tiktok"}}" target="_blank" rel="noopener" class="pill"><span>TikTok</span><span class="pill__arrow" style="color: var(--color-accent);">↗</span></a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</section>
+{{/author}}
+
+<section class="px-6 sm:px-10 lg:px-20 pb-20 sm:pb-28">
+    <div class="mx-auto max-w-content">
+        <div class="mb-10">
+            {{> eyebrow text="EPISODES"}}
+            <h2 class="mt-3 font-sans text-[32px] sm:text-[36px] font-bold tracking-title m-0" style="color: var(--color-text);">{{t "Recent episodes hosted by"}} {{#author}}{{name}}{{/author}}</h2>
+        </div>
+
+        {{#if posts}}
+            <div class="post-feed">
+                {{#foreach posts}}
+                    {{> post-card}}
+                {{/foreach}}
+            </div>
+            {{#if pagination.next}}
+                <div class="flex justify-center mt-14">
+                    <a href="{{page_url pagination.next}}" class="pill" style="border-color: var(--color-text);">
+                        {{t "Load more"}} <span class="pill__arrow" style="color: var(--color-accent);">→</span>
+                    </a>
+                </div>
+            {{/if}}
+        {{else}}
+            <p class="text-center font-serif text-lg py-12" style="color: var(--color-text-muted);">{{t "No episodes yet."}}</p>
+        {{/if}}
+    </div>
+</section>

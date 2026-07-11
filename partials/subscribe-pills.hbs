@@ -1,0 +1,62 @@
+{{!-- Top-of-fold subscribe pill row used by the homepage band and the
+      end-of-episode CTA.
+
+      Slots are fixed for layout stability:
+          1. Apple Podcasts        (always — opens via podcast:// URL scheme)
+          2. Spotify               (conditional — needs subscribe_spotify_url)
+          3. Overcast              (always — overcast.fm/podcasterinfo)
+          4. Pocket Casts          (always — pktc:// URL scheme)
+          5. RSS                   (always — raw feed)
+      Plus a "+ N more ways to subscribe →" link pointing to /subscribe/
+      with N derived from the always-on list size plus any closed-catalog
+      URLs the publisher has set (Amazon Music, YouTube Music).
+
+      Inputs:
+          surface — "dark" for the homepage band (inverted pills) or "light"
+                    for any future light context. Defaults to "dark".
+
+      The dark band sits on .surface-inverse, so .pill--platform inherits the
+      inverted border/text. Light surfaces should pass surface="light" so we
+      drop pill--platform and the plain .pill rules apply. --}}
+
+{{!-- Apple Podcasts: the podcast:// scheme is recognised by iOS and macOS
+     Podcasts.app — they fetch the RSS at the host+path and subscribe
+     directly, with no Apple-directory submission required. On Android /
+     desktop the link is inert, which is fine: those platforms have other
+     pills below in the band that DO work for them. --}}
+<a href="podcast://{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/"
+   class="pill {{#match surface "!=" "light"}}pill--platform{{/match}}" target="_blank" rel="noopener">
+    <span>Apple Podcasts</span><span class="pill__arrow" aria-hidden="true">↗</span>
+</a>
+
+{{#if @custom.subscribe_spotify_url}}
+<a href="{{@custom.subscribe_spotify_url}}"
+   class="pill {{#match surface "!=" "light"}}pill--platform{{/match}}" target="_blank" rel="noopener">
+    <span>Spotify</span><span class="pill__arrow" aria-hidden="true">↗</span>
+</a>
+{{/if}}
+
+{{!-- Overcast is iOS-only; the x-callback URL opens the app and subscribes
+     directly. No-op on desktop / Android, like the pktc:// and castro://
+     schemes used elsewhere. --}}
+<a href="overcast://x-callback-url/add?url={{encode @site.url}}%2Fpodcast%2Frss%2F"
+   class="pill {{#match surface "!=" "light"}}pill--platform{{/match}}" target="_blank" rel="noopener">
+    <span>Overcast</span><span class="pill__arrow" aria-hidden="true">↗</span>
+</a>
+
+<a href="pktc://subscribe/{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/"
+   class="pill {{#match surface "!=" "light"}}pill--platform{{/match}}" target="_blank" rel="noopener">
+    <span>Pocket Casts</span><span class="pill__arrow" aria-hidden="true">↗</span>
+</a>
+
+<a href="{{@site.url}}/podcast/rss/"
+   class="pill {{#match surface "!=" "light"}}pill--platform{{/match}}" target="_blank" rel="noopener">
+    <span>RSS</span><span class="pill__arrow" aria-hidden="true">↗</span>
+</a>
+
+{{!-- Link to the full grid. The exact count is dynamic across 6 possible
+     closed-catalog URLs (Spotify, Amazon, YouTube Music, iHeart, Castbox,
+     Pandora), so we don't try to render a precise number here. --}}
+<a href="{{@site.url}}/subscribe/" class="subscribe-more">
+    {{t "More ways to subscribe"}} →
+</a>

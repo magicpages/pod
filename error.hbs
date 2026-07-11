@@ -1,0 +1,12 @@
+{{!< default}}
+
+<section class="px-6 py-32 sm:py-40 text-center">
+    <div class="mx-auto max-w-prose">
+        <p class="font-mono text-[12px] uppercase mb-6" style="letter-spacing: 0.1em; color: var(--color-accent);">{{t "Error"}}</p>
+        <h1 class="font-sans text-[96px] sm:text-[128px] font-bold tracking-display leading-none m-0" style="color: var(--color-text);">{{statusCode}}</h1>
+        <p class="mt-6 font-serif text-[20px] leading-[150%]" style="color: var(--color-text-body);">{{message}}</p>
+        <a href="{{@site.url}}" class="pill mt-10 inline-flex">
+            <span>{{t "Back to the show"}}</span><span class="pill__arrow" style="color: var(--color-accent);">→</span>
+        </a>
+    </div>
+</section>

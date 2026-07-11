@@ -1,0 +1,7 @@
+{{!-- Extract and print the HH:MM:SS duration from a post's code injection
+      foot marker. Emits nothing if the marker isn't present, so callers can
+      safely wrap this in a container and get no output when a post isn't a
+      full podcast episode.
+
+      Usage: {{> pod-duration}}   (inside a post context)                    --}}
+{{#match codeinjection_foot "~" "<!-- pod:duration="}}{{#foreach (split codeinjection_foot separator="<!-- pod:duration=")}}{{#if @last}}{{#foreach (split this separator=" -->")}}{{#if @first}}{{this}}{{/if}}{{/foreach}}{{/if}}{{/foreach}}{{/match}}

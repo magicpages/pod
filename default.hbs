@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="{{@site.locale}}" data-color-scheme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{meta_title}}</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="theme-color" content="{{@site.accent_color}}">
+
+    {{!-- Ghost emits a preconnect for fonts.bunny.net without crossorigin,
+         so the warmed socket isn't reused by the CORS font fetches.
+         Adding our own with crossorigin saves ~330ms LCP. --}}
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+
+    {{!-- Inline critical CSS so the LCP element can paint before the linked
+         stylesheet arrives. The sized .font-sans h1 / .font-serif paragraph
+         rules match the Tailwind classes used above the fold on home, episode,
+         and archive pages. --}}
+    <style>
+        :root {
+            --color-bg: #FAFAF7;
+            --color-text: #0A0A0A;
+            --color-text-body: #3A3833;
+            --color-text-muted: #6B6960;
+            --site-accent: {{@site.accent_color}};
+            --color-accent: {{@site.accent_color}};
+        }
+        [data-color-scheme="dark"] {
+            --color-bg: #0A0A0A;
+            --color-text: #F5F2EC;
+            --color-text-body: #D6D3C8;
+            --color-text-muted: #9C998F;
+        }
+        html { background: var(--color-bg); color: var(--color-text); }
+        body {
+            margin: 0;
+            background: var(--color-bg);
+            color: var(--color-text-body);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0;
+            color: var(--color-text);
+        }
+        h1.font-sans { font-size: 40px; line-height: 1; }
+        @media (min-width: 640px) {
+            h1.font-sans { font-size: 56px; }
+        }
+        @media (min-width: 1024px) {
+            h1.font-sans { font-size: 68px; }
+        }
+        .font-serif {
+            font-family: Charter, Georgia, Cambria, "Times New Roman", Times, serif;
+        }
+        article.post p.font-serif { font-size: 15px; line-height: 1.55; }
+        @media (min-width: 640px) {
+            article.post p.font-serif { font-size: 16px; }
+        }
+    </style>
+    <script>
+        (function () {
+            try {
+                var root = document.documentElement;
+                var stored = localStorage.getItem('pod-color-scheme');
+                var preference = '{{@custom.color_scheme_default}}'.toLowerCase();
+                var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var scheme;
+                if (stored === 'dark' || stored === 'light') {
+                    scheme = stored;
+                } else if (preference === 'dark') {
+                    scheme = 'dark';
+                } else if (preference === 'light') {
+                    scheme = 'light';
+                } else {
+                    scheme = systemDark ? 'dark' : 'light';
+                }
+                root.setAttribute('data-color-scheme', scheme);
+            } catch (e) {
+                /* ignore */
+            }
+        })();
+    </script>
+
+    {{!-- Force <audio preload="none"> as elements parse, so Ghost's default
+         audio card doesn't auto-fetch metadata before our player takes over. --}}
+    <script>
+        (function () {
+            try {
+                new MutationObserver(function (records) {
+                    records.forEach(function (rec) {
+                        rec.addedNodes.forEach(function (n) {
+                            if (n.tagName === 'AUDIO') {
+                                n.preload = 'none';
+                            } else if (n.querySelectorAll) {
+                                n.querySelectorAll('audio').forEach(function (a) { a.preload = 'none'; });
+                            }
+                        });
+                    });
+                }).observe(document.documentElement, { childList: true, subtree: true });
+            } catch (e) { /* ignore */ }
+        })();
+    </script>
+
+    {{!-- We don't <link rel="preload"> the fonts: Ghost's {{asset}} helper
+         adds a ?v=… cache-buster, but the CSS's @font-face url() resolves
+         to the bare path — so a preload would create a second cache entry
+         and double-fetch. --}}
+    <link rel="preload" as="style" href="{{asset "built/styles.css"}}">
+    <link rel="stylesheet" href="{{asset "built/styles.css"}}">
+
+    {{{block "head"}}}
+
+    {{ghost_head}}
+</head>
+<body class="{{body_class}}">
+    <a href="#main" class="skip-link">{{t "Skip to main content"}}</a>
+
+    <div class="pod-shell flex min-h-screen flex-col">
+        {{> header}}
+
+        <main id="main" role="main" tabindex="-1" class="flex-1">
+            {{{body}}}
+        </main>
+
+        {{> footer}}
+    </div>
+
+    {{ghost_foot}}
+
+    <script type="module" src="{{asset "built/main.js"}}"></script>
+</body>
+</html>

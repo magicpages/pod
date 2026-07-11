@@ -1,0 +1,316 @@
+{{!-- iTunes-spec + Podcasting 2.0 RSS feed served at /podcast/rss/ when the
+      bundled routes.yaml is installed. Per-episode metadata is read from
+      code-injection HTML comments in each post's "Code injection → foot":
+
+        <!-- pod:audio=https://… -->        (optional; defaults to first <audio>)
+        <!-- pod:duration=01:23:45 -->
+        <!-- pod:episode=12 -->
+        <!-- pod:season=1 -->
+        <!-- pod:explicit=false -->          (defaults to channel-level)
+        <!-- pod:episodeType=full -->        (full | trailer | bonus)
+        <!-- pod:chapter=HH:MM:SS|Title -->  (repeatable; PSC + on-page chapters)
+        <!-- pod:chapters=https://…/chapters.json -->  (PC2.0 chapters JSON URL)
+        <!-- pod:transcript=URL|MIME -->     (repeatable; language optional 3rd field)
+        <!-- pod:person=Name|Role|Href|Img --> (repeatable; Role/Href/Img optional)
+        <!-- pod:socialinteract=URL|Protocol|AccountId --> (fediverse comment root)
+
+      Requires Ghost 5.93+ for {{split}}. --}}<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+  xmlns:psc="http://podlove.org/simple-chapters"
+  xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <title>{{@site.title}}</title>
+    <link>{{@site.url}}</link>
+    <description><![CDATA[{{@site.description}}]]></description>
+    <language>{{@site.locale}}</language>
+    <copyright>© {{date format="YYYY"}} {{@site.title}}</copyright>
+    <lastBuildDate>{{date format="ddd, DD MMM YYYY HH:mm:ss ZZ"}}</lastBuildDate>
+    <atom:link href="{{@site.url}}/podcast/rss/" rel="self" type="application/rss+xml" />
+
+    {{!-- Podcasting 2.0 channel-level tags.
+
+         <podcast:guid> is a v5 UUID derived from the feed URL per spec.
+         Since Handlebars can't compute UUIDv5, the publisher generates one
+         (e.g. via podcastindex.org/namespace/1.0#guid) and pastes it into
+         the `podcast_guid` custom setting. --}}
+    {{#if @custom.podcast_guid}}<podcast:guid>{{@custom.podcast_guid}}</podcast:guid>{{/if}}
+    <podcast:medium>podcast</podcast:medium>
+    {{#match @custom.podcast_locked "!=" "no"}}
+      {{#if @custom.podcast_locked}}
+        <podcast:locked{{#if @custom.itunes_owner_email}} owner="{{@custom.itunes_owner_email}}"{{/if}}>{{@custom.podcast_locked}}</podcast:locked>
+      {{/if}}
+    {{/match}}
+    {{!-- Funding: explicit URL wins; otherwise fall back to Ghost's
+         built-in tipjar (Portal → Support) when donations are enabled. --}}
+    {{#if @custom.podcast_funding_url}}
+      <podcast:funding url="{{@custom.podcast_funding_url}}">Support the show</podcast:funding>
+    {{else}}
+      {{#if @site.donations_enabled}}<podcast:funding url="{{@site.url}}/#/portal/support">Support the show</podcast:funding>{{/if}}
+    {{/if}}
+    {{!-- Value 4 Value micro-payments. Method (`keysend`) and suggested
+         rate (5000 sats/min) are Lightning conventions — hardcoded to
+         keep the custom-setting count within Ghost's 20-setting limit. --}}
+    {{#match @custom.podcast_value_type "!=" "none"}}
+      {{#if @custom.podcast_value_address}}
+        <podcast:value type="{{@custom.podcast_value_type}}" method="keysend" suggested="0.00000005000">
+          <podcast:valueRecipient name="{{@site.title}}" type="node" address="{{@custom.podcast_value_address}}" split="100" />
+        </podcast:value>
+      {{/if}}
+    {{/match}}
+
+    {{#if @custom.itunes_author}}<itunes:author>{{@custom.itunes_author}}</itunes:author>{{/if}}
+    <itunes:summary><![CDATA[{{@site.description}}]]></itunes:summary>
+    {{#if @custom.itunes_owner_email}}
+    <itunes:owner>
+      {{#if @custom.itunes_owner_name}}<itunes:name>{{@custom.itunes_owner_name}}</itunes:name>{{/if}}
+      <itunes:email>{{@custom.itunes_owner_email}}</itunes:email>
+    </itunes:owner>
+    {{/if}}
+    <itunes:explicit>{{@custom.itunes_explicit}}</itunes:explicit>
+    <itunes:type>{{@custom.itunes_type}}</itunes:type>
+    {{!-- Channel artwork. Apple wants 3000x3000 JPG/PNG. Order of preference:
+         1. Publisher's uploaded cover_image — but only if they've overridden
+            Ghost's default (`static.ghost.org/.../publication-cover.jpg`),
+            which is 775 KB and violates Apple's 512 KB recommendation.
+         2. Publisher's site icon (square by convention).
+         3. Theme-shipped default (`assets/img/default-cover.jpg`, 3000x3000,
+            ~360 KB) — Ghost's own publication cover, cropped square and
+            re-compressed. Ensures the feed always validates. --}}
+    {{#match @site.cover_image "~" "static.ghost.org"}}
+        {{#if @site.icon}}<itunes:image href="{{img_url @site.icon absolute="true"}}"/>{{else}}<itunes:image href="{{@site.url}}{{asset "img/default-cover.jpg"}}"/>{{/if}}
+    {{else}}
+        {{#if @site.cover_image}}
+            <itunes:image href="{{img_url @site.cover_image absolute="true"}}"/>
+        {{else}}
+            {{#if @site.icon}}<itunes:image href="{{img_url @site.icon absolute="true"}}"/>{{else}}<itunes:image href="{{@site.url}}{{asset "img/default-cover.jpg"}}"/>{{/if}}
+        {{/if}}
+    {{/match}}
+    {{#if @custom.itunes_category}}<itunes:category text="{{@custom.itunes_category}}"/>{{/if}}
+
+    {{#get "posts" filter="tag:hash-podcast+status:published" include="tags,authors" limit="100" order="published_at desc"}}
+      {{#foreach posts}}
+        <item>
+          <title><![CDATA[{{title}}]]></title>
+          <link>{{url absolute="true"}}</link>
+          <pubDate>{{date published_at format="ddd, DD MMM YYYY HH:mm:ss ZZ"}}</pubDate>
+          <guid isPermaLink="false">{{id}}</guid>
+          <description><![CDATA[{{custom_excerpt}}]]></description>
+          {{!-- content:encoded with a strict <p>…</p> whitelist.
+
+               Apple, Spotify, Overcast and Pocket Casts all only render
+               <p>, <a>, <ul>/<ol>/<li> in show notes — everything else
+               degrades to inert HTML or visible junk. Rather than chase
+               every Ghost card type with its own strip pattern (audio,
+               bookmark, gallery, callout, button, file, …), we emit
+               ONLY the content of <p> blocks. Inline <a> links inside
+               paragraphs survive (they're inside the <p> chunk).
+
+               Trade-off: <ul>/<ol> lists OUTSIDE of paragraphs are
+               dropped. The dominant show-notes pattern (prose + inline
+               links) is preserved; richer lists would need an opt-in.
+
+               We use {{html}} (raw post HTML string) instead of {{content}}
+               (a block helper that can't be piped through (split)). --}}
+          <content:encoded><![CDATA[{{#foreach (split html separator="<p>")}}{{#unless @first}}<p>{{#foreach (split this separator="</p>")}}{{#if @first}}{{{this}}}{{/if}}{{/foreach}}</p>{{/unless}}{{/foreach}}]]></content:encoded>
+          <itunes:title><![CDATA[{{title}}]]></itunes:title>
+          <itunes:summary><![CDATA[{{custom_excerpt}}]]></itunes:summary>
+          <itunes:author>{{#primary_author}}{{name}}{{/primary_author}}</itunes:author>
+          {{!-- Apple Podcasts requires per-episode artwork to be at least
+               1400x1400. size="xxl" (2000px per package.json image_sizes)
+               satisfies that; size="l" (960px) would be rejected. When a
+               post has no feature_image, we fall back to the theme's
+               shipped default cover so the feed always carries per-item
+               artwork (PSP-1 "Recommended item elements"). --}}
+          {{#if feature_image}}<itunes:image href="{{img_url feature_image size="xxl" absolute="true"}}"/>{{else}}<itunes:image href="{{@site.url}}{{asset "img/default-cover.jpg"}}"/>{{/if}}
+
+          {{!-- Single-value marker pattern: outer split by "<!-- pod:KEY="
+               produces N+1 chunks (N = occurrences), and `@last` picks the
+               chunk AFTER the final marker. Inner split by " -->" trims to
+               the value. Repeatable markers use `{{#unless @first}}` to
+               iterate every chunk except the leading pre-marker one. --}}
+          {{!-- Enclosure. Publishers should set the exact file size via
+                 <!-- pod:audioLength=BYTES -->
+               so strict validators + download-progress UIs get the real
+               value. Falls back to "0" — permitted by the iTunes spec
+               but flagged as a warning by validators. Ghost's audio card
+               stores no size in the rendered HTML, so there's no auto-
+               derivation path. Both branches (explicit pod:audio=… and
+               auto-detect from <audio> in the post body) honour the
+               same length lookup. --}}
+          {{#match codeinjection_foot "~" "<!-- pod:audioLength="}}
+            {{!-- Length known: pin it once at post-scope so the URL
+                 lookup inside nested foreaches doesn't need to reach
+                 back across scopes. --}}
+            <enclosure length="{{#foreach (split codeinjection_foot separator="<!-- pod:audioLength=")}}{{#if @last}}{{#foreach (split this separator=" -->")}}{{#if @first}}{{this}}{{/if}}{{/foreach}}{{/if}}{{/foreach}}" url="{{#match codeinjection_foot "~" "<!-- pod:audio="}}{{#foreach (split codeinjection_foot separator="<!-- pod:audio=")}}{{#if @last}}{{#foreach (split this separator=" -->")}}{{#if @first}}{{this}}{{/if}}{{/foreach}}{{/if}}{{/foreach}}{{else}}{{#foreach (split html separator="<audio src=\"")}}{{#match @index "=" 1}}{{#foreach (split this separator="\"")}}{{#if @first}}{{this}}{{/if}}{{/foreach}}{{/match}}{{/foreach}}{{/match}}" type="audio/mpeg"/>
+          {{else}}
+            {{#match codeinjection_foot "~" "<!-- pod:audio="}}
+              {{#foreach (split codeinjection_foot separator="<!-- pod:audio=")}}
+                {{#if @last}}
+                  {{#foreach (split this separator=" -->")}}
+                    {{#if @first}}<enclosure url="{{this}}" length="0" type="audio/mpeg"/>{{/if}}
+                  {{/foreach}}
+                {{/if}}
+              {{/foreach}}
+            {{else}}
+              {{#foreach (split html separator="<audio src=\"")}}
+                {{#match @index "=" 1}}
+                  {{#foreach (split this separator="\"")}}
+                    {{#if @first}}<enclosure url="{{this}}" length="0" type="audio/mpeg"/>{{/if}}
+                  {{/foreach}}
+                {{/match}}
+              {{/foreach}}
+            {{/match}}
+          {{/match}}
+
+          {{#match codeinjection_foot "~" "<!-- pod:duration="}}
+            {{#foreach (split codeinjection_foot separator="<!-- pod:duration=")}}
+              {{#if @last}}
+                {{#foreach (split this separator=" -->")}}
+                  {{#if @first}}<itunes:duration>{{this}}</itunes:duration>{{/if}}
+                {{/foreach}}
+              {{/if}}
+            {{/foreach}}
+          {{/match}}
+
+          {{#match codeinjection_foot "~" "<!-- pod:episode="}}
+            {{#foreach (split codeinjection_foot separator="<!-- pod:episode=")}}
+              {{#if @last}}
+                {{#foreach (split this separator=" -->")}}
+                  {{#if @first}}<itunes:episode>{{this}}</itunes:episode>
+                  <podcast:episode>{{this}}</podcast:episode>{{/if}}
+                {{/foreach}}
+              {{/if}}
+            {{/foreach}}
+          {{/match}}
+
+          {{#match codeinjection_foot "~" "<!-- pod:season="}}
+            {{#foreach (split codeinjection_foot separator="<!-- pod:season=")}}
+              {{#if @last}}
+                {{#foreach (split this separator=" -->")}}
+                  {{#if @first}}<itunes:season>{{this}}</itunes:season>
+                  <podcast:season>{{this}}</podcast:season>{{/if}}
+                {{/foreach}}
+              {{/if}}
+            {{/foreach}}
+          {{/match}}
+
+          {{#match codeinjection_foot "~" "<!-- pod:explicit="}}
+            {{#foreach (split codeinjection_foot separator="<!-- pod:explicit=")}}
+              {{#if @last}}
+                {{#foreach (split this separator=" -->")}}
+                  {{#if @first}}<itunes:explicit>{{this}}</itunes:explicit>{{/if}}
+                {{/foreach}}
+              {{/if}}
+            {{/foreach}}
+          {{else}}
+            <itunes:explicit>{{@custom.itunes_explicit}}</itunes:explicit>
+          {{/match}}
+
+          {{#match codeinjection_foot "~" "<!-- pod:episodeType="}}
+            {{#foreach (split codeinjection_foot separator="<!-- pod:episodeType=")}}
+              {{#if @last}}
+                {{#foreach (split this separator=" -->")}}
+                  {{#if @first}}<itunes:episodeType>{{this}}</itunes:episodeType>{{/if}}
+                {{/foreach}}
+              {{/if}}
+            {{/foreach}}
+          {{else}}
+            <itunes:episodeType>full</itunes:episodeType>
+          {{/match}}
+
+          {{!-- Podcasting 2.0 <podcast:chapters> — publisher-hosted JSON URL. --}}
+          {{#match codeinjection_foot "~" "<!-- pod:chapters="}}
+            {{#foreach (split codeinjection_foot separator="<!-- pod:chapters=")}}
+              {{#if @last}}
+                {{#foreach (split this separator=" -->")}}
+                  {{#if @first}}<podcast:chapters url="{{this}}" type="application/json+chapters"/>{{/if}}
+                {{/foreach}}
+              {{/if}}
+            {{/foreach}}
+          {{/match}}
+
+          {{!-- Podcasting 2.0 <podcast:transcript> (repeatable). Format:
+                 <!-- pod:transcript=URL|MIME -->
+                 <!-- pod:transcript=URL|MIME|LANG -->
+               Language is optional and only emitted when provided. --}}
+          {{#foreach (split codeinjection_foot separator="<!-- pod:transcript=")}}
+            {{#unless @first}}
+              {{#foreach (split this separator=" -->")}}
+                {{#if @first}}<podcast:transcript{{#foreach (split this separator="|")}}{{#match @index "=" 0}} url="{{this}}"{{/match}}{{#match @index "=" 1}} type="{{this}}"{{/match}}{{#match @index "=" 2}} language="{{this}}"{{/match}}{{/foreach}} />{{/if}}
+              {{/foreach}}
+            {{/unless}}
+          {{/foreach}}
+
+          {{!-- Podcasting 2.0 <podcast:person> (repeatable). Format:
+                 <!-- pod:person=Name -->              (role defaults to "host")
+                 <!-- pod:person=Name|Role -->
+                 <!-- pod:person=Name|Role|Href|Img --> --}}
+          {{#foreach (split codeinjection_foot separator="<!-- pod:person=")}}
+            {{#unless @first}}
+              {{#foreach (split this separator=" -->")}}
+                {{#if @first}}
+                  {{#match this "~" "|"}}
+                    <podcast:person{{#foreach (split this separator="|")}}{{#match @index "=" 1}} role="{{this}}"{{/match}}{{#match @index "=" 2}} href="{{this}}"{{/match}}{{#match @index "=" 3}} img="{{this}}"{{/match}}{{/foreach}}>{{#foreach (split this separator="|")}}{{#if @first}}{{this}}{{/if}}{{/foreach}}</podcast:person>
+                  {{else}}
+                    <podcast:person role="host">{{this}}</podcast:person>
+                  {{/match}}
+                {{/if}}
+              {{/foreach}}
+            {{/unless}}
+          {{/foreach}}
+
+          {{!-- Podcasting 2.0 <podcast:socialInteract>. Format:
+                 <!-- pod:socialinteract=URL -->             (protocol defaults to "activitypub")
+                 <!-- pod:socialinteract=URL|Protocol -->
+                 <!-- pod:socialinteract=URL|Protocol|AccountId --> --}}
+          {{#match codeinjection_foot "~" "<!-- pod:socialinteract="}}
+            {{#foreach (split codeinjection_foot separator="<!-- pod:socialinteract=")}}
+              {{#if @last}}
+                {{#foreach (split this separator=" -->")}}
+                  {{#if @first}}
+                    {{#match this "~" "|"}}
+                      <podcast:socialInteract{{#foreach (split this separator="|")}}{{#match @index "=" 0}} uri="{{this}}"{{/match}}{{#match @index "=" 1}} protocol="{{this}}"{{/match}}{{#match @index "=" 2}} accountId="{{this}}"{{/match}}{{/foreach}} />
+                    {{else}}
+                      <podcast:socialInteract uri="{{this}}" protocol="activitypub" />
+                    {{/match}}
+                  {{/if}}
+                {{/foreach}}
+              {{/if}}
+            {{/foreach}}
+          {{/match}}
+
+          {{!-- Podlove Simple Chapters (psc): inline chapter marks supported
+               by Apple Podcasts, Overcast, Pocket Casts, and Spotify. Format:
+                 <!-- pod:chapter=HH:MM:SS|Title -->     (repeatable)
+               Each chapter chunk is split twice: once at " -->" to isolate
+               the value, then at "|" to separate timestamp from title.
+
+               codeinjection_foot is a SafeString — {{this}} skips HTML escape
+               in this iteration scope. We escape `&` and `"` for XML attribute
+               safety via nested split-join (outer escapes `&` to `&amp;`,
+               inner escapes `"` to `&quot;`); the order matters because the
+               replacement for `&` itself contains `&`. --}}
+          {{#match codeinjection_foot "~" "<!-- pod:chapter="}}
+          <psc:chapters version="1.2">
+            {{#foreach (split codeinjection_foot separator="<!-- pod:chapter=")}}
+              {{#unless @first}}
+                {{#foreach (split this separator=" -->")}}
+                  {{#if @first}}
+                    {{#foreach (split this separator="|")}}
+                      {{#if @first}}<psc:chapter start="{{this}}" {{else}}title="{{#foreach (split this separator="&")}}{{#foreach (split this separator="\"")}}{{this}}{{#unless @last}}&quot;{{/unless}}{{/foreach}}{{#unless @last}}&amp;{{/unless}}{{/foreach}}"/>{{/if}}
+                    {{/foreach}}
+                  {{/if}}
+                {{/foreach}}
+              {{/unless}}
+            {{/foreach}}
+          </psc:chapters>
+          {{/match}}
+        </item>
+      {{/foreach}}
+    {{/get}}
+  </channel>
+</rss>

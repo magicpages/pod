@@ -1,0 +1,712 @@
+/* Self-hosted latin-subset fonts. font-display: swap → render in fallback,
+   swap when ready. Vendored woff2 lives under assets/fonts/. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/inter-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/inter-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/inter-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/inter-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Serif Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/source-serif-pro-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Serif Pro';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/source-serif-pro-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Serif Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/source-serif-pro-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-400.woff2') format('woff2');
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (see design.md §3).
+   --site-accent is set by the inline style block in default.hbs from
+   {{@site.accent_color}}. The full accent scale below derives from it via
+   color-mix() so the entire theme re-tints when the publisher changes
+   their Ghost Admin accent. */
+:root {
+  --color-bg: #FAFAF7;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F5F2EC;
+  --color-border: #E5E3DC;
+  --color-border-strong: #D6D3C8;
+  /* Borders that define an interactive component (input/chip/card) need
+     ≥3:1 against the adjacent surface (WCAG 1.4.11). */
+  --color-border-interactive: #8A877F;
+
+  --color-text: #0A0A0A;
+  --color-text-strong: #1F1D18;
+  --color-text-body: #3A3833;
+  --color-text-muted: #6B6960;
+  --color-text-dim: #9C998F;
+
+  --color-accent: var(--site-accent);
+  --color-accent-eyebrow: var(--color-accent);
+  --color-accent-50:  color-mix(in srgb, var(--color-accent) 8%,  white);
+  --color-accent-200: color-mix(in srgb, var(--color-accent) 30%, white);
+  --color-accent-400: color-mix(in srgb, var(--color-accent) 60%, white);
+  --color-accent-500: color-mix(in srgb, var(--color-accent) 80%, white);
+  --color-accent-600: color-mix(in srgb, var(--color-accent) 75%, black);
+  --color-accent-700: var(--color-accent);
+  --color-accent-800: color-mix(in srgb, var(--color-accent) 75%, black);
+  --color-accent-900: color-mix(in srgb, var(--color-accent) 55%, black);
+
+  /* Always-dark surfaces (footer, subscribe band, post CTA). */
+  --color-inverse-bg: #0A0A0A;
+  --color-inverse-surface: #13110E;
+  --color-inverse-surface-alt: #1F1D18;
+  --color-inverse-border: #2A2823;
+  --color-inverse-text: #F5F2EC;
+  --color-inverse-text-muted: #9C998F;
+}
+
+[data-color-scheme="dark"] {
+  --color-bg: #0A0A0A;
+  --color-surface: #13110E;
+  --color-surface-alt: #1F1D18;
+  --color-border: #2A2823;
+  --color-border-strong: #3A3833;
+  --color-border-interactive: #6B6960;
+
+  --color-text: #F5F2EC;
+  --color-text-strong: #F5F2EC;
+  --color-text-body: #D6D3C8;
+  --color-text-muted: #9C998F;
+  --color-text-dim: #6B6960;
+
+  /* Each shade is re-derived against --site-accent (not chained through
+     --color-accent) because nested color-mix() in custom properties doesn't
+     late-resolve. 50/50 white mixes keep 12px eyebrow text ≥4.5:1 against
+     #0A0A0A for any publisher accent (red/teal/navy/dim all verified). */
+  --color-accent: color-mix(in srgb, var(--site-accent) 55%, white);
+  --color-accent-eyebrow: color-mix(in srgb, var(--site-accent) 50%, white);
+  --color-accent-wash: color-mix(in srgb, var(--site-accent) 75%, black);
+  --color-accent-500: color-mix(in srgb, var(--site-accent) 50%, white);
+  --color-accent-400: color-mix(in srgb, var(--site-accent) 45%, white);
+  --color-accent-200: color-mix(in srgb, var(--site-accent) 25%, white);
+}
+
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  body {
+    @apply font-sans antialiased;
+    background-color: var(--color-bg);
+    color: var(--color-text-body);
+    font-feature-settings: "ss01", "cv02";
+  }
+
+  /* Tabular figures everywhere numerals need to align (design.md §4) */
+  .tabular,
+  time,
+  .font-mono,
+  [class*="text-"][class*="mono"] {
+    font-feature-settings: "tnum", "lnum";
+  }
+
+  ::selection {
+    background-color: var(--color-accent-50);
+    color: var(--color-text);
+  }
+
+  [data-color-scheme="dark"] ::selection {
+    background-color: var(--color-accent-wash);
+    color: var(--color-text);
+  }
+
+  /* Screen-reader-only text (standard recipe). */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Newsletter form states. Ghost toggles .success on the form on submit. */
+  form[data-members-form] .pod-signup-success {
+    display: none;
+  }
+  form[data-members-form].success .pod-signup-success {
+    display: block;
+  }
+  form[data-members-form].success #pod-signup-help,
+  form[data-members-form].success [data-members-error] {
+    display: none;
+  }
+
+  .skip-link {
+    @apply absolute -top-10 left-2 z-50 rounded px-3 py-2 text-sm font-medium;
+    background-color: var(--color-text);
+    color: var(--color-bg);
+  }
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    @apply top-2;
+  }
+
+  /* :focus-visible only: rings appear on keyboard focus, not pointer click.
+     We deliberately don't override border-radius — modern browsers draw the
+     outline along the element's existing rounded corners, which is correct
+     for asymmetric controls like the signup input+button pair. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .surface-inverse :focus-visible,
+  [data-color-scheme="dark"] :focus-visible {
+    outline-color: var(--color-accent-200);
+  }
+  a[tabindex="-1"]:focus-visible {
+    outline: none;
+  }
+
+  /* Ghost's cards.min.css zeros the outline on signup-card inputs; restore. */
+  .kg-signup-card-input:focus-visible {
+    outline: 2px solid var(--color-accent) !important;
+    outline-offset: 2px;
+  }
+
+  /* WCAG 2.4.11 — the sticky header (h-20 = 80px) would otherwise cover the
+     focus ring on Tab-focused links near the top of the viewport. */
+  :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])) {
+    scroll-margin-top: 6rem;
+  }
+}
+
+@layer components {
+  /* Expands the hit area of small text-links to ≥24×24 CSS px (WCAG 2.5.8)
+     via invisible padding. Visible glyph size unchanged; the negative
+     margin cancels the box-flow contribution so spacing rules above stay
+     intact. -tap-block is the full-row variant for vertical lists. */
+  .target-tap {
+    display: inline-block;
+    padding-block: 4px;
+    margin-block: -4px;
+  }
+  .target-tap-block {
+    display: block;
+    padding-block: 6px;
+    margin-block: -6px;
+  }
+
+  /* Eyebrow label + rule: mobile shows just the label, sm:+ adds the rule. */
+  .eyebrow {
+    @apply flex items-center gap-3;
+  }
+  .eyebrow-text {
+    font-family: theme('fontFamily.mono');
+    @apply text-[12px] uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-eyebrow);
+  }
+  @media (min-width: 640px) {
+    .eyebrow::before {
+      content: '';
+      @apply block h-[2px] w-8 shrink-0;
+      background-color: var(--color-accent);
+    }
+  }
+
+  .waveform-mark {
+    @apply inline-flex items-center gap-[2px];
+    height: 22px;
+  }
+  .waveform-mark span {
+    @apply block w-[2px] rounded-[1px];
+    background-color: var(--color-accent);
+  }
+
+  .pill {
+    font-family: theme('fontFamily.sans');
+    @apply inline-flex items-center gap-2 rounded-full px-[18px] py-[10px] text-sm font-medium transition-colors;
+    border: 1px solid var(--color-border-interactive);
+    color: var(--color-text);
+  }
+  .pill:hover {
+    border-color: var(--color-text);
+  }
+  .pill--filled {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+  }
+  .pill--filled:hover {
+    background-color: var(--color-text-strong);
+  }
+  .pill--platform {
+    @apply px-[18px] py-[11px];
+    border-color: var(--color-inverse-border);
+    color: var(--color-inverse-text);
+  }
+  .pill--platform:hover {
+    border-color: var(--color-inverse-text);
+  }
+  .pill--platform .pill__arrow {
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity 120ms ease, color 120ms ease;
+  }
+  .pill--platform:hover .pill__arrow {
+    color: var(--color-accent-500);
+    opacity: 1;
+  }
+
+  /* Grid variant — used on /subscribe/. Light surface, full-width by default,
+     a small color dot to differentiate platforms at a glance. */
+  .pill--grid {
+    @apply w-full justify-between gap-3 px-5 py-3.5;
+    background-color: var(--color-surface);
+  }
+  .pill--grid .pill__arrow {
+    color: var(--color-text-muted);
+    transition: color 120ms ease;
+  }
+  .pill--grid:hover .pill__arrow {
+    color: var(--color-accent);
+  }
+  .pill__dot {
+    @apply inline-block rounded-full flex-shrink-0;
+    width: 10px;
+    height: 10px;
+    background-color: var(--dot-color, var(--color-accent));
+  }
+  .pill--grid > span:nth-child(2) {
+    @apply flex-1 text-left;
+  }
+
+  /* "+ N more ways to subscribe →" link emitted by partials/subscribe-pills.
+     Inherits the accent eyebrow color on dark surfaces; falls back to the
+     standard accent on light. */
+  .subscribe-more {
+    font-family: theme('fontFamily.sans');
+    @apply inline-flex items-center text-[13px] font-medium underline-offset-2 transition-colors;
+    color: var(--color-accent-eyebrow, var(--color-accent));
+    text-decoration: none;
+  }
+  .subscribe-more:hover {
+    text-decoration: underline;
+  }
+
+  .chip {
+    font-family: theme('fontFamily.sans');
+    @apply inline-flex items-center rounded-full px-[14px] py-[7px] text-[13px] font-medium;
+    border: 1px solid var(--color-border-interactive);
+    color: var(--color-text-strong);
+  }
+  .chip--active {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+  }
+
+  .card {
+    @apply rounded-xl;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-interactive);
+  }
+
+  /* Always-dark scopes (footer, post CTA) — re-declare the lighter accent
+     scale because nested color-mix() doesn't late-resolve through var()s. */
+  .surface-inverse {
+    background-color: var(--color-inverse-bg);
+    color: var(--color-inverse-text);
+    --color-accent: color-mix(in srgb, var(--site-accent) 55%, white);
+    --color-accent-eyebrow: color-mix(in srgb, var(--site-accent) 50%, white);
+    --color-accent-500: color-mix(in srgb, var(--site-accent) 50%, white);
+    --color-accent-400: color-mix(in srgb, var(--site-accent) 45%, white);
+    --color-accent-200: color-mix(in srgb, var(--site-accent) 25%, white);
+  }
+  .surface-inverse--card {
+    background-color: var(--color-inverse-surface);
+    border-color: var(--color-inverse-border);
+  }
+
+  /* End-of-post CTA: always-dark regardless of color scheme. */
+  .pod-cta {
+    --color-bg: #0A0A0A;
+    --color-surface: #13110E;
+    --color-surface-alt: #1F1D18;
+    --color-text: #F5F2EC;
+    --color-text-strong: #F5F2EC;
+    --color-text-body: #D6D3C8;
+    --color-text-muted: #9C998F;
+    --color-inverse-text: #F5F2EC;
+    --color-inverse-border: #3A3833;
+    --color-accent: color-mix(in srgb, var(--site-accent) 55%, white);
+    --color-accent-eyebrow: color-mix(in srgb, var(--site-accent) 50%, white);
+    --color-accent-500: color-mix(in srgb, var(--site-accent) 50%, white);
+    --color-accent-400: color-mix(in srgb, var(--site-accent) 45%, white);
+    --color-accent-200: color-mix(in srgb, var(--site-accent) 25%, white);
+    background-color: #0A0A0A;
+    color: #F5F2EC;
+  }
+  .pod-cta__heading {
+    color: #F5F2EC;
+  }
+
+  /* Cover-art typography uses container query units (cqi = 1% of inline
+     size) so the same partial reads well from 80px thumbnails up to 460px
+     hero covers. The solid background-color is a fallback for contrast
+     auditors that can't evaluate gradients. */
+  .cover-art {
+    @apply relative overflow-hidden rounded-xl;
+    background-color: var(--color-accent-600);
+    background-image: linear-gradient(
+      135deg,
+      var(--color-accent-600) 0%,
+      var(--color-accent-700) 60%,
+      var(--color-accent-900) 100%
+    );
+    color: rgba(255, 255, 255, 0.95);
+    isolation: isolate;
+    container-type: inline-size;
+  }
+  .cover-art__label {
+    @apply absolute font-sans font-semibold uppercase;
+    left: 7%;
+    top: 7%;
+    font-size: clamp(10px, 4cqi, 18px);
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.95);
+  }
+  .cover-art__number {
+    @apply absolute font-sans font-bold;
+    left: 7%;
+    bottom: 28%;
+    font-size: clamp(36px, 38cqi, 260px);
+    line-height: 0.85;
+    letter-spacing: -0.06em;
+    color: rgba(255, 255, 255, 0.92);
+  }
+  .cover-art__meta {
+    @apply absolute font-mono;
+    left: 7%;
+    bottom: 7%;
+    font-size: clamp(9px, 2.8cqi, 14px);
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .cover-art__waveform {
+    @apply absolute inset-0 flex items-center gap-[3px];
+    padding: 0 15%;
+    pointer-events: none;
+  }
+  .cover-art__waveform span {
+    @apply block w-[3px] rounded-[1.5px] flex-1;
+    background-color: rgba(255, 255, 255, 0.14);
+    max-width: 3px;
+  }
+
+  .pullquote {
+    @apply relative pl-8 my-8;
+    border-left: 3px solid var(--color-accent);
+  }
+  .pullquote-text {
+    @apply font-serif text-[26px] leading-snug;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+  }
+  .pullquote-attribution {
+    @apply mt-4 font-medium text-[13px] uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+  }
+
+  /* !important overrides the inline `style="color: …"` on nav anchors. */
+  .pod-header a.is-current,
+  .pod-footer a.is-current {
+    color: var(--color-accent) !important;
+  }
+  .pod-header nav a.is-current {
+    position: relative;
+  }
+  .pod-header nav a.is-current::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -22px;
+    height: 2px;
+    background-color: var(--color-accent);
+  }
+
+  .pod-player {
+    font-family: theme('fontFamily.sans');
+    @apply flex w-full items-center gap-3 sm:gap-4 rounded-full p-3 sm:pr-6;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    height: 80px;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .pod-player__button {
+    @apply flex h-14 w-14 shrink-0 items-center justify-center rounded-full;
+    background-color: var(--color-text);
+    color: var(--color-bg);
+    transition: transform 120ms ease;
+  }
+  .pod-player__button:hover {
+    transform: scale(1.04);
+  }
+  .pod-player__button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+  [data-color-scheme="dark"] .pod-player__button {
+    background-color: var(--color-accent);
+  }
+  .pod-player__icon {
+    @apply h-5 w-5;
+    fill: currentColor;
+  }
+  .pod-player__waveform {
+    @apply relative flex flex-1 items-center justify-between gap-[2px];
+    height: 32px;
+    cursor: pointer;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .pod-player__waveform-bar {
+    @apply block w-[2px] shrink-0 rounded-[1px];
+    background-color: var(--color-border-strong);
+    transition: background-color 80ms linear;
+  }
+  .pod-player__waveform-bar--played {
+    background-color: var(--color-accent);
+  }
+  .pod-player__time {
+    @apply hidden sm:flex flex-col items-end shrink-0 gap-[2px];
+    font-feature-settings: "tnum";
+    min-width: 44px;
+  }
+  .pod-player__time-current {
+    @apply font-mono text-[13px];
+    color: var(--color-text);
+  }
+  .pod-player__time-total {
+    @apply font-mono text-[11px];
+    color: var(--color-text-muted);
+  }
+  .pod-player__skip {
+    font-family: theme('fontFamily.sans');
+    font-feature-settings: "tnum";
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold;
+    background-color: var(--color-surface-alt);
+    color: var(--color-text-strong);
+    letter-spacing: -0.02em;
+  }
+  .pod-player__skip:hover {
+    background-color: var(--color-border);
+  }
+  [data-color-scheme="dark"] .pod-player__skip {
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
+  }
+  .pod-player__speed {
+    @apply hidden sm:inline-block shrink-0 rounded-md px-2 py-1.5 text-[12px] font-medium;
+    background-color: var(--color-surface-alt);
+    color: var(--color-text-strong);
+    min-width: 38px;
+    text-align: center;
+  }
+  [data-color-scheme="dark"] .pod-player__speed {
+    color: var(--color-text);
+  }
+  .pod-player__download {
+    @apply hidden sm:flex h-8 w-8 shrink-0 items-center justify-center rounded-full;
+    color: var(--color-text-body);
+  }
+  .pod-player__download:hover {
+    color: var(--color-text);
+    background-color: var(--color-surface-alt);
+  }
+
+  .pod-player--compact {
+    height: 64px;
+    padding-left: 8px;
+    padding-right: 16px;
+  }
+  .pod-player--compact .pod-player__button {
+    @apply h-12 w-12;
+  }
+
+  .post-content {
+    @apply text-[19px] leading-[1.75];
+    color: var(--color-text-strong);
+    max-width: 720px;
+    font-family: theme('fontFamily.sans');
+  }
+  /* Hide Ghost's default audio card — we render our own player at the top
+     of the post. The <audio> stays in the DOM so the player can read its src. */
+  .post-content figure.kg-audio-card,
+  .post-content audio {
+    display: none !important;
+  }
+  .post-content > p,
+  .post-content > ul,
+  .post-content > ol,
+  .post-content > blockquote {
+    font-family: theme('fontFamily.serif');
+  }
+  .post-content > * + * {
+    margin-top: 1.5em;
+  }
+  .post-content h2 {
+    @apply font-sans font-semibold text-[28px] leading-tight;
+    letter-spacing: -0.015em;
+    color: var(--color-text);
+    margin-top: 2.5em;
+    margin-bottom: 0.5em;
+  }
+  .post-content h3 {
+    @apply font-sans font-semibold text-[22px] leading-snug;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+  }
+  /* Prose text-links only — leave our pill/chip/cover/player anchors alone. */
+  .post-content a:not(.pill):not(.chip):not(.cover-art):not([class*="pod-player"]) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .post-content a:not(.pill):not(.chip):not(.cover-art):not([class*="pod-player"]):hover {
+    text-decoration-thickness: 2px;
+  }
+  .post-content blockquote {
+    @apply pl-8 my-8 italic;
+    border-left: 3px solid var(--color-accent);
+    color: var(--color-text);
+    font-size: 22px;
+  }
+  .post-content code {
+    @apply rounded px-[0.3em] py-[0.1em] font-mono text-[0.9em];
+    background-color: var(--color-surface-alt);
+    color: var(--color-accent);
+  }
+  .post-content pre {
+    @apply rounded-xl p-5 overflow-x-auto font-mono text-sm;
+    background-color: var(--color-inverse-surface);
+    color: var(--color-inverse-text);
+  }
+  .post-content pre code {
+    @apply bg-transparent p-0;
+    color: inherit;
+  }
+  .post-content img,
+  .post-content video,
+  .post-content audio {
+    @apply my-8 rounded-xl;
+    max-width: 100%;
+    height: auto;
+  }
+  .post-content figure {
+    @apply my-8;
+  }
+  .post-content figcaption {
+    @apply mt-3 text-center font-sans text-sm;
+    color: var(--color-text-muted);
+  }
+  .post-content .kg-bookmark-card {
+    @apply rounded-xl border my-8 overflow-hidden;
+    border-color: var(--color-border);
+  }
+
+  /* Koenig editor card widths (required by Ghost). */
+  .post-content .kg-width-wide {
+    position: relative;
+    width: 85vw;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 1200px;
+  }
+  .post-content .kg-width-full {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: none;
+  }
+  .post-content .kg-width-full img {
+    width: 100%;
+  }
+}
+
+/* Ghost custom fonts: --gh-font-heading / --gh-font-body are injected when
+   the publisher picks a font in Admin → Design → Typography. Theme defaults
+   apply when they leave it blank. */
+body {
+  font-family: var(--gh-font-body, theme('fontFamily.sans'));
+}
+h1, h2, h3, h4, h5, h6,
+.font-sans {
+  font-family: var(--gh-font-heading, theme('fontFamily.sans'));
+}
+.font-serif,
+.post-content > p,
+.post-content > ul,
+.post-content > ol,
+.post-content > blockquote {
+  font-family: var(--gh-font-body, theme('fontFamily.serif'));
+}
+
+@media print {
+  .pod-player,
+  .pod-subscribe-band,
+  .pod-footer {
+    display: none !important;
+  }
+}

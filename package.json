@@ -1,0 +1,229 @@
+{
+  "name": "pod",
+  "description": "A Ghost theme by Magic Pages — editorial audio for podcasters.",
+  "version": "1.0.0",
+  "engines": {
+    "ghost": ">=5.93.0"
+  },
+  "author": {
+    "name": "Magic Pages",
+    "email": "help@magicpages.co",
+    "url": "https://www.magicpages.co"
+  },
+  "license": "MIT",
+  "keywords": [
+    "ghost",
+    "theme",
+    "ghost-theme",
+    "podcast"
+  ],
+  "config": {
+    "posts_per_page": 12,
+    "image_sizes": {
+      "xs": {
+        "width": 160
+      },
+      "s": {
+        "width": 320
+      },
+      "m": {
+        "width": 600
+      },
+      "l": {
+        "width": 960
+      },
+      "xl": {
+        "width": 1200
+      },
+      "xxl": {
+        "width": 2000
+      }
+    },
+    "card_assets": true,
+    "custom": {
+      "color_scheme_default": {
+        "type": "select",
+        "options": [
+          "Light",
+          "Dark",
+          "System"
+        ],
+        "default": "System",
+        "group": "homepage",
+        "description": "Default color scheme for new visitors. Each visitor can override via the header toggle."
+      },
+      "itunes_author": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "Channel author for Apple Podcasts."
+      },
+      "itunes_owner_name": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "iTunes owner name. Required for Apple Podcasts submission."
+      },
+      "itunes_owner_email": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "iTunes owner email. Required for Apple Podcasts submission."
+      },
+      "itunes_category": {
+        "type": "select",
+        "options": [
+          "Arts",
+          "Business",
+          "Comedy",
+          "Education",
+          "Fiction",
+          "Health & Fitness",
+          "History",
+          "Leisure",
+          "Music",
+          "News",
+          "Religion & Spirituality",
+          "Science",
+          "Society & Culture",
+          "Sports",
+          "Technology",
+          "True Crime",
+          "TV & Film"
+        ],
+        "default": "Technology",
+        "group": "homepage",
+        "description": "Primary Apple Podcasts category."
+      },
+      "itunes_explicit": {
+        "type": "select",
+        "options": [
+          "false",
+          "true"
+        ],
+        "default": "false",
+        "group": "homepage",
+        "description": "Channel-level explicit flag."
+      },
+      "itunes_type": {
+        "type": "select",
+        "options": [
+          "episodic",
+          "serial"
+        ],
+        "default": "episodic",
+        "group": "homepage",
+        "description": "Show type: episodic (latest first) or serial (oldest first)."
+      },
+      "podcast_guid": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "PC2.0 <podcast:guid>. UUIDv5 derived from feed URL. Generate at podcastindex.org/namespace/1.0#guid."
+      },
+      "podcast_locked": {
+        "type": "select",
+        "options": [
+          "no",
+          "yes"
+        ],
+        "default": "no",
+        "group": "homepage",
+        "description": "PC2.0 <podcast:locked>. `yes` blocks other hosts from importing this feed."
+      },
+      "podcast_funding_url": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "PC2.0 <podcast:funding>. Support URL. Empty falls back to Ghost's tipjar (if donations are enabled)."
+      },
+      "podcast_value_type": {
+        "type": "select",
+        "options": [
+          "none",
+          "lightning"
+        ],
+        "default": "none",
+        "group": "homepage",
+        "description": "PC2.0 <podcast:value>. `lightning` enables Value 4 Value micro-payments."
+      },
+      "podcast_value_address": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "Lightning node pubkey (starts with 02… or 03…). Required for <podcast:value>."
+      },
+      "subscribe_spotify_url": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "Spotify show URL. Empty hides the Spotify pill."
+      },
+      "subscribe_amazon_url": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "Amazon Music show URL. Empty hides the pill."
+      },
+      "subscribe_youtube_url": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "YouTube Music show URL. Empty hides the pill."
+      },
+      "subscribe_iheart_url": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "iHeartRadio show URL. Empty hides the pill."
+      },
+      "subscribe_castbox_url": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "Castbox channel URL. Empty hides the pill."
+      },
+      "subscribe_pandora_url": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "Pandora podcast URL. Empty hides the pill."
+      },
+      "show_post_cta": {
+        "type": "boolean",
+        "default": true,
+        "group": "post",
+        "description": "Show the subscribe CTA card at the end of each episode."
+      },
+      "post_cta_heading": {
+        "type": "text",
+        "default": "New episodes every Friday. Don't miss the next one.",
+        "group": "post",
+        "description": "Subscribe CTA heading at the end of episodes."
+      }
+    }
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "preview": "vite preview",
+    "zip": "npm run build && node scripts/zip.mjs",
+    "validate": "gscan .",
+    "test": "gscan . --verbose",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "node scripts/release.mjs"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "@tailwindcss/typography": "^0.5.15",
+    "autoprefixer": "^10.4.20",
+    "gscan": "^5.2.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.0.3"
+  },
+  "browserslist": [
+    "defaults"
+  ]
+}

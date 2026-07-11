@@ -1,0 +1,27 @@
+# Claude Code
+.claude
+
+# Dependencies
+node_modules/
+
+# Build output
+assets/built/
+dist/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Environment
+.env
+.env.local
+
+# Theme package
+*.zip
+
+# Scratch file written + removed by scripts/release.mjs
+.release-notes.md

@@ -1,0 +1,95 @@
+{{!< default}}
+
+{{!-- /subscribe/ landing page — the show's "one link to rule them all" page.
+      Sticky cover + show meta on desktop (≥ lg), stacked on mobile. The full
+      platform grid renders via partials/subscribe-grid.hbs; conditional pills
+      hide when the publisher hasn't set the matching @custom.subscribe_* URL.
+
+      Wired via routes.yaml.example:
+          /subscribe/:
+              template: podcast/subscribe
+--}}
+
+<section class="px-6 sm:px-10 lg:px-20 py-12 sm:py-16 lg:py-20">
+    <div class="mx-auto max-w-content">
+        <div class="grid grid-cols-1 lg:grid-cols-[380px_minmax(0,1fr)] gap-10 lg:gap-16 items-start">
+
+            <aside class="lg:sticky lg:top-24 flex flex-col gap-6">
+                {{!-- The site icon, if present, doubles as the show cover. The
+                     fallback below produces the gradient cover used elsewhere. --}}
+                {{#if @site.icon}}
+                    <img src="{{img_url @site.icon size="l"}}" alt=""
+                         class="w-full max-w-[380px] aspect-square rounded-2xl object-cover">
+                {{else}}
+                    {{> cover-art size_class="aspect-square w-full max-w-[380px] rounded-2xl" label=@site.title}}
+                {{/if}}
+
+                <div class="flex flex-col gap-3">
+                    {{> eyebrow text=(t "Subscribe to the show")}}
+                    <h1 class="font-sans text-[36px] sm:text-[44px] font-bold tracking-display leading-[1.05] m-0" style="color: var(--color-text);">
+                        {{@site.title}}
+                    </h1>
+                    {{#if @site.description}}
+                    <p class="font-serif text-[17px] leading-[155%] m-0" style="color: var(--color-text-body);">{{@site.description}}</p>
+                    {{/if}}
+                    {{#if @custom.itunes_author}}
+                    <p class="font-sans text-sm font-medium m-0" style="color: var(--color-text-muted);">
+                        {{t "with"}} {{@custom.itunes_author}}
+                    </p>
+                    {{/if}}
+                </div>
+            </aside>
+
+            <div class="flex flex-col gap-8">
+                <div class="flex flex-col gap-3">
+                    {{> eyebrow text=(t "Listen in your favorite app")}}
+                    <h2 class="font-sans text-[28px] sm:text-[32px] font-bold tracking-title m-0" style="color: var(--color-text);">
+                        {{t "Your podcast app, your call."}}
+                    </h2>
+                    <p class="font-serif text-[15px] leading-[155%] m-0 max-w-lg" style="color: var(--color-text-muted);">
+                        {{t "Pick the app you already use — it'll open the show ready to subscribe in one tap."}}
+                    </p>
+                </div>
+
+                {{> subscribe-grid}}
+
+                <div class="mt-4 rounded-2xl border p-5 sm:p-6" style="border-color: var(--color-border-interactive); background-color: var(--color-surface);">
+                    <span class="font-mono text-[11px] uppercase block mb-2" style="letter-spacing: 0.12em; color: var(--color-accent);">RSS</span>
+                    <p class="font-serif text-[15px] leading-[155%] mb-3 m-0" style="color: var(--color-text-body);">
+                        {{t "Power users — paste this URL into any podcast app."}}
+                    </p>
+                    {{!-- The button uses a tiny script to copy the URL to the
+                         clipboard and flip its label to "Copied" for ~1.5s.
+                         JS-disabled visitors still get a selectable URL above. --}}
+                    <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+                        <code class="font-mono text-[13px] px-3 py-2 rounded-md break-all flex-1 m-0" style="background: var(--color-surface-alt); color: var(--color-text-body);">{{@site.url}}/podcast/rss/</code>
+                        <button type="button" class="pill pill--filled self-start sm:self-auto" data-rss-copy data-rss-url="{{@site.url}}/podcast/rss/">
+                            <span data-rss-label>{{t "Copy RSS feed URL"}}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <a href="{{@site.url}}/" class="font-sans text-sm font-medium underline self-start" style="color: var(--color-accent);">
+                    ← {{t "Back to the homepage"}}
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        var btn = document.querySelector('[data-rss-copy]');
+        if (!btn || !navigator.clipboard) return;
+        var label = btn.querySelector('[data-rss-label]');
+        var original = label ? label.textContent : '';
+        btn.addEventListener('click', function () {
+            navigator.clipboard.writeText(btn.dataset.rssUrl).then(function () {
+                if (!label) return;
+                label.textContent = '{{t "Copied"}}';
+                setTimeout(function () { label.textContent = original; }, 1500);
+            });
+        });
+    })();
+</script>

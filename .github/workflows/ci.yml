@@ -1,0 +1,54 @@
+name: CI
+
+# Runs on every PR + every push to main. Verifies the theme still passes
+# gscan, builds cleanly, and produces a valid pod.zip. Not a release —
+# that lives in release.yml.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: validate · build · zip
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: gscan (Ghost 6.x compatibility)
+        run: npm run validate
+
+      - name: Build
+        run: npm run build
+
+      - name: Package release zip
+        run: npm run zip
+
+      # Upload as a workflow artifact so a reviewer can grab it off a PR
+      # without cloning + building locally. Not the same as the release
+      # asset — release.yml attaches its own build to the GitHub Release.
+      - name: Upload pod.zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pod-zip
+          path: pod.zip
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,43 @@
+{{!-- Invoked two ways:
+        {{navigation}}                — Ghost helper auto-populates `navigation`.
+                                         Pass type="secondary" to get isSecondary=true
+                                         + the secondary menu in `navigation`.
+        {{> navigation type=…}}       — direct partial; we read @site.navigation
+                                         ourselves. Types: "mobile", "footer".
+
+      When iterating @site.navigation directly we must write {{this.url}} —
+      bare {{url}} resolves to @site.url inside that foreach scope. --}}
+
+{{#if isSecondary}}
+    <ul class="list-none p-0 m-0 space-y-3">
+        {{#foreach navigation}}
+            <li class="m-0"><a href="{{url}}" class="target-tap-block font-sans text-sm no-underline hover:underline {{#if current}}is-current{{/if}}" style="color: var(--color-inverse-text);">{{label}}</a></li>
+        {{/foreach}}
+    </ul>
+{{else}}
+{{#match type "mobile"}}
+    <ul class="list-none p-0 m-0 flex flex-col gap-1">
+        {{#foreach @site.navigation}}
+            <li class="m-0">
+                <a href="{{this.url}}" class="block py-3 font-sans text-lg font-medium no-underline" style="color: var(--color-text);">{{this.label}}</a>
+            </li>
+        {{/foreach}}
+    </ul>
+{{else}}
+{{#match type "footer"}}
+    <ul class="list-none p-0 m-0 space-y-3">
+        {{#foreach @site.navigation}}
+            <li class="m-0"><a href="{{this.url}}" class="target-tap-block font-sans text-sm no-underline hover:underline" style="color: var(--color-inverse-text);">{{this.label}}</a></li>
+        {{/foreach}}
+    </ul>
+{{else}}
+    <ul class="hidden items-center gap-9 list-none p-0 m-0 sm:flex">
+        {{#foreach navigation}}
+            <li class="m-0">
+                <a href="{{url}}" class="target-tap font-sans text-sm font-medium no-underline hover:underline {{#if current}}is-current{{/if}}" style="color: var(--color-text-strong);">{{label}}</a>
+            </li>
+        {{/foreach}}
+    </ul>
+{{/match}}
+{{/match}}
+{{/if}}

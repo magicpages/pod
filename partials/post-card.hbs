@@ -1,0 +1,27 @@
+<article class="{{post_class}} flex items-center gap-6 sm:gap-8 border-t py-7" style="border-color: var(--color-border);">
+    {{!-- Per-card pod:* markers so the cover-art fallback tile shows this
+          episode's number + duration (hydrated by assets/js/player.js). --}}
+    <script type="application/pod-meta" data-pod-meta>{{{codeinjection_foot}}}</script>
+    <a href="{{url}}" class="block shrink-0" aria-hidden="true" tabindex="-1">
+        {{> cover-art size_class="h-20 w-20 sm:h-24 sm:w-24 rounded-lg" episode=primary_tag.name src=feature_image hide_label=true hide_meta=true}}
+    </a>
+
+    <div class="min-w-0 flex-1">
+        {{#if primary_tag}}
+            <p class="font-mono text-[11px] uppercase mb-1.5" style="letter-spacing: 0.08em; color: var(--color-accent);">{{primary_tag.name}}</p>
+        {{/if}}
+        <h2 class="font-sans text-[20px] sm:text-[22px] font-semibold tracking-tight leading-tight mb-2" style="color: var(--color-text);">
+            <a href="{{url}}" class="no-underline" style="color: inherit;">{{title}}</a>
+        </h2>
+        {{#if custom_excerpt}}
+            <p class="font-serif text-[15px] sm:text-[16px] leading-[155%] m-0" style="color: var(--color-text-body);">{{custom_excerpt}}</p>
+        {{else}}
+            <p class="font-serif text-[15px] sm:text-[16px] leading-[155%] m-0" style="color: var(--color-text-body);">{{excerpt characters="160"}}</p>
+        {{/if}}
+    </div>
+
+    <div class="hidden shrink-0 flex-col items-end gap-1 text-right sm:flex">
+        <span class="font-mono text-[13px]" style="color: var(--color-text-strong);">{{> pod-duration}}</span>
+        <time class="font-sans text-[13px]" style="color: var(--color-text-muted);" datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMM D"}}</time>
+    </div>
+</article>

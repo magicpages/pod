@@ -1,0 +1,45 @@
+<footer class="pod-footer surface-inverse mt-16 py-12 sm:py-16 px-6 sm:px-10 lg:px-20">
+    <div class="mx-auto max-w-content">
+        <div class="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between">
+            <div class="max-w-sm">
+                <a href="{{@site.url}}" class="flex items-center gap-3 no-underline" style="color: var(--color-inverse-text);">
+                    {{> waveform-mark}}
+                    <span class="font-sans text-[22px] font-bold tracking-title">{{@site.title}}</span>
+                </a>
+                {{#if @site.description}}
+                    <p class="mt-3 font-sans text-[14px] leading-[155%]" style="color: var(--color-inverse-text-muted);">{{@site.description}}</p>
+                {{/if}}
+            </div>
+
+            <div class="grid grid-cols-2 gap-10 sm:grid-cols-3 sm:gap-18">
+                <div>
+                    <h3 class="font-mono text-[11px] uppercase mb-3" style="letter-spacing: 0.12em; color: var(--color-accent-500);">Listen</h3>
+                    <ul class="list-none p-0 m-0 space-y-3">
+                        <li><a href="podcast://{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/" class="target-tap-block font-sans text-sm no-underline hover:underline" style="color: var(--color-inverse-text);" target="_blank" rel="noopener">Apple Podcasts</a></li>
+                        {{#if @custom.subscribe_spotify_url}}<li><a href="{{@custom.subscribe_spotify_url}}" class="target-tap-block font-sans text-sm no-underline hover:underline" style="color: var(--color-inverse-text);" target="_blank" rel="noopener">Spotify</a></li>{{/if}}
+                        <li><a href="overcast://x-callback-url/add?url={{encode @site.url}}%2Fpodcast%2Frss%2F" class="target-tap-block font-sans text-sm no-underline hover:underline" style="color: var(--color-inverse-text);" target="_blank" rel="noopener">Overcast</a></li>
+                        <li><a href="{{@site.url}}/podcast/rss/" class="target-tap-block font-sans text-sm no-underline hover:underline" style="color: var(--color-inverse-text);">RSS feed</a></li>
+                        <li><a href="{{@site.url}}/subscribe/" class="target-tap-block font-sans text-sm no-underline hover:underline" style="color: var(--color-accent-500);">All subscribe options →</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-mono text-[11px] uppercase mb-3" style="letter-spacing: 0.12em; color: var(--color-accent-500);">Show</h3>
+                    {{> navigation type="footer"}}
+                </div>
+
+                {{#if @site.secondary_navigation}}
+                <div>
+                    <h3 class="font-mono text-[11px] uppercase mb-3" style="letter-spacing: 0.12em; color: var(--color-accent-500);">More</h3>
+                    {{navigation type="secondary"}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+
+        <div class="mt-12 flex flex-col gap-3 border-t pt-6 text-sm sm:flex-row sm:items-center sm:justify-between" style="border-color: var(--color-inverse-border); color: var(--color-inverse-text-muted);">
+            <p class="font-sans m-0">© {{date format="YYYY"}} {{@site.title}}</p>
+            <p class="font-sans m-0">{{t "Powered by"}} <a href="https://ghost.org" target="_blank" rel="noopener" class="no-underline hover:underline" style="color: var(--color-inverse-text-muted);">Ghost</a> · {{t "Designed by"}} <a href="https://www.magicpages.co" target="_blank" rel="noopener" class="no-underline hover:underline" style="color: var(--color-inverse-text-muted);">Magic Pages</a></p>
+        </div>
+    </div>
+</footer>

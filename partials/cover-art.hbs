@@ -1,0 +1,41 @@
+{{!-- Cover tile. With a feature_image src, renders an <img>; without one,
+      renders the gradient + waveform + episode-number fallback.
+
+      Inputs:
+        src        — feature_image URL (optional)
+        size_class — Tailwind sizing, e.g. "h-24 w-24"
+        episode    — episode number for the fallback
+        label      — wordmark text (defaults to @site.title)
+        hide_label — true to suppress the wordmark
+        hide_meta  — true to suppress the "EP{n} · duration" line
+                     (use on small tiles where the meta collides with the
+                     number; the card usually prints duration next to it) —
+        priority   — true on the LCP cover (home hero, episode header)
+                     so the <img> gets fetchpriority=high + loading=eager --}}
+<div class="cover-art {{size_class}} relative overflow-hidden" aria-hidden="true">
+    {{#if src}}
+        {{!-- Decorative (alt="", aria-hidden parent), so srcset is capped at
+             600w — keeps the LCP transfer small. 460 CSS px on desktop, 92vw
+             on mobile; not retina-sharp but indistinguishable in this design. --}}
+        <img
+            srcset="{{img_url src size="xs" format="avif"}} 160w,
+                    {{img_url src size="s"  format="avif"}} 320w,
+                    {{img_url src size="m"  format="avif"}} 600w"
+            sizes="(max-width: 640px) 92vw, 460px"
+            src="{{img_url src size="m"}}"
+            alt=""
+            {{#if priority}}fetchpriority="high" loading="eager"{{else}}loading="lazy"{{/if}}
+            class="absolute inset-0 h-full w-full object-cover">
+    {{else}}
+        <div class="cover-art__waveform">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        {{#unless hide_label}}
+            <span class="cover-art__label">{{#if label}}{{label}}{{else}}{{@site.title}}{{/if}}</span>
+        {{/unless}}
+        <span class="cover-art__number" data-pod-meta-episode>{{#if episode}}{{episode}}{{/if}}</span>
+        {{#unless hide_meta}}
+            <span class="cover-art__meta" data-pod-meta-cover>{{#if meta}}{{meta}}{{/if}}</span>
+        {{/unless}}
+    {{/if}}
+</div>

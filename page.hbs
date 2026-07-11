@@ -1,0 +1,37 @@
+{{!< default}}
+{{#post}}
+<article class="{{post_class}} mx-auto max-w-prose px-6 sm:px-10 lg:px-20 pt-16 pb-20 sm:pt-24">
+    {{#match @page.show_title_and_feature_image}}
+        <header class="mb-12">
+            <h1 class="font-sans text-[40px] sm:text-[56px] font-bold tracking-display leading-[1.05] m-0" style="color: var(--color-text);">{{title}}</h1>
+            {{#if custom_excerpt}}
+                <p class="mt-5 font-serif text-[20px] leading-[155%] m-0" style="color: var(--color-text-body);">{{custom_excerpt}}</p>
+            {{/if}}
+        </header>
+
+        {{#if feature_image}}
+            <figure class="mb-12">
+                <img
+                    srcset="{{img_url feature_image size="s"  format="avif"}} 320w,
+                            {{img_url feature_image size="m"  format="avif"}} 600w,
+                            {{img_url feature_image size="l"  format="avif"}} 960w,
+                            {{img_url feature_image size="xl" format="avif"}} 1200w,
+                            {{img_url feature_image size="xxl" format="avif"}} 2000w"
+                    sizes="(max-width: 640px) 100vw, 720px"
+                    src="{{img_url feature_image size="l"}}"
+                    alt="{{title}}"
+                    loading="eager"
+                    fetchpriority="high"
+                    class="w-full rounded-2xl">
+                {{#if feature_image_caption}}
+                    <figcaption class="mt-3 text-center font-sans text-sm" style="color: var(--color-text-muted);">{{{feature_image_caption}}}</figcaption>
+                {{/if}}
+            </figure>
+        {{/if}}
+    {{/match}}
+
+    <div class="post-content">
+        {{content}}
+    </div>
+</article>
+{{/post}}

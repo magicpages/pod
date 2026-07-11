@@ -1,0 +1,80 @@
+{{!-- Full subscribe grid used on /subscribe/.
+
+      URL patterns are taken from Nathan Gathright's podcast platform
+      catalog (https://nathangathright.github.io/podcast-platform-links/)
+      and verified against each platform's own documentation. Three buckets:
+
+        A. RSS-derivable     Apple, Overcast, Pocket Casts, Castro,
+                             Podcast Addict, AntennaPod, Podverse,
+                             Player FM, gPodder, RSS
+        C. Publisher-only    Spotify, Amazon Music, YouTube Music,
+                             iHeartRadio, Castbox, Pandora
+                             (no public RSS-to-subscribe URL — pill only
+                              renders when the matching @custom URL is set)
+
+      URL conventions used below:
+        * scheme stripped     → {{#foreach (split @site.url separator="://")}}…{{/foreach}}/podcast/rss/
+        * encoded RSS URL     → {{encode @site.url}}%2Fpodcast%2Frss%2F
+        * encoded show title  → {{encode @site.title}}
+          (Pod is a single-show theme — @site.title IS the show name.)
+--}}
+
+<ul class="subscribe-grid grid grid-cols-1 sm:grid-cols-2 gap-3 m-0 p-0 list-none">
+
+    <li><a href="podcast://{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#A445F5;"></span><span>Apple Podcasts</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+
+    {{#if @custom.subscribe_spotify_url}}
+    <li><a href="{{@custom.subscribe_spotify_url}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#1DB954;"></span><span>Spotify</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+    {{/if}}
+
+    <li><a href="overcast://x-callback-url/add?url={{encode @site.url}}%2Fpodcast%2Frss%2F" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#FC7E0F;"></span><span>Overcast</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+
+    <li><a href="pktc://subscribe/{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#F43E37;"></span><span>Pocket Casts</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+
+    <li><a href="castro://subscribe/{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#00B265;"></span><span>Castro</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+
+    {{#if @custom.subscribe_amazon_url}}
+    <li><a href="{{@custom.subscribe_amazon_url}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#00A8E1;"></span><span>Amazon Music</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+    {{/if}}
+
+    {{#if @custom.subscribe_youtube_url}}
+    <li><a href="{{@custom.subscribe_youtube_url}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#FF0000;"></span><span>YouTube Music</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+    {{/if}}
+
+    {{!-- Castbox: no public RSS-to-subscribe pattern. Publisher must paste
+         the show URL (https://castbox.fm/channel/…) for the pill to render. --}}
+    {{#if @custom.subscribe_castbox_url}}
+    <li><a href="{{@custom.subscribe_castbox_url}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#F55B23;"></span><span>Castbox</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+    {{/if}}
+
+    {{!-- Podcast Addict: the Android scheme is podcastaddict://{HOST_PATH} —
+         NOT podcastaddict://subscribe/… as some older examples suggest. --}}
+    <li><a href="podcastaddict://{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#F4842D;"></span><span>Podcast Addict</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+
+    {{!-- AntennaPod: the HTTPS deeplink works on both web (falls back to
+         install page) and inside the Android app, so we prefer it over the
+         raw antennapod-subscribe:// scheme. --}}
+    <li><a href="https://antennapod.org/deeplink/subscribe/?url={{encode @site.url}}%2Fpodcast%2Frss%2F" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#0E70BD;"></span><span>AntennaPod</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+
+    <li><a href="https://podverse.fm/search?q={{encode @site.title}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#2968B0;"></span><span>Podverse</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+
+    {{!-- Player FM: /subscribe?id=<encoded RSS> is the documented add link. --}}
+    <li><a href="https://player.fm/subscribe?id={{encode @site.url}}%2Fpodcast%2Frss%2F" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#E2522A;"></span><span>Player FM</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+
+    <li><a href="https://gpodder.net/subscribe?url={{encode @site.url}}%2Fpodcast%2Frss%2F" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#9CC542;"></span><span>gPodder</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+
+    {{!-- Pandora: requires the show's PC:<id> URL — no general RSS or search
+         URL maps reliably. Pill only renders when the publisher sets the URL. --}}
+    {{#if @custom.subscribe_pandora_url}}
+    <li><a href="{{@custom.subscribe_pandora_url}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#005483;"></span><span>Pandora</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+    {{/if}}
+
+    {{!-- iHeartRadio: same constraint as Pandora — no public subscribe URL
+         that resolves from RSS or search. Pill renders only when set. --}}
+    {{#if @custom.subscribe_iheart_url}}
+    <li><a href="{{@custom.subscribe_iheart_url}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#C6002B;"></span><span>iHeartRadio</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+    {{/if}}
+
+    <li><a href="{{@site.url}}/podcast/rss/" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#F26522;"></span><span>RSS feed</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+
+</ul>

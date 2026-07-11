@@ -1,0 +1,149 @@
+{{!< default}}
+
+{{#is "home"}}
+{{#get "posts" limit="1" as |hero|}}
+    {{#foreach hero}}
+        {{#if feature_image}}
+            {{#contentFor "head"}}
+                {{#match feature_image "~" "images.unsplash.com"}}
+                    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+                {{/match}}
+                <link rel="preload" as="image" fetchpriority="high"
+                    href="{{img_url feature_image size="m" format="avif"}}"
+                    imagesrcset="{{img_url feature_image size="s" format="avif"}} 320w, {{img_url feature_image size="m" format="avif"}} 600w"
+                    imagesizes="(max-width: 640px) 100vw, 460px">
+            {{/contentFor}}
+        {{/if}}
+    {{/foreach}}
+{{/get}}
+{{/is}}
+
+{{!-- Hero only on /, not on paginated /page/N/. --}}
+{{#is "home"}}
+{{#if posts}}
+    {{#foreach posts limit=1}}
+        <section data-pod-scope class="px-6 sm:px-10 lg:px-20 py-16 sm:py-24">
+            {{!-- Stashed for the audio player + pod-meta hydration on this page only. --}}
+            <script type="application/pod-meta" data-pod-meta>{{{codeinjection_foot}}}</script>
+            <div class="mx-auto max-w-content">
+                <article class="grid grid-cols-1 items-center gap-10 lg:grid-cols-[460px_minmax(0,1fr)] lg:gap-20">
+                    <a href="{{url}}" class="block w-full mx-auto lg:mx-0" aria-hidden="true" tabindex="-1">
+                        {{> cover-art size_class="aspect-square w-full max-w-[460px] rounded-2xl" episode=primary_tag.name src=feature_image priority=true}}
+                    </a>
+
+                    <div class="flex flex-col gap-6 sm:gap-7">
+                        <div class="eyebrow">
+                            <span class="eyebrow-text">{{t "Latest episode"}}<span data-pod-meta-eyebrow></span></span>
+                        </div>
+
+                        <h1 class="font-sans text-[40px] sm:text-[56px] lg:text-[68px] font-bold tracking-display leading-[1] m-0" style="color: var(--color-text);">
+                            <a href="{{url}}" class="no-underline" style="color: inherit;">{{title}}</a>
+                        </h1>
+
+                        {{#if custom_excerpt}}
+                        <p class="font-serif text-[19px] sm:text-[22px] leading-[155%] m-0" style="color: var(--color-text-body);">{{custom_excerpt}}</p>
+                        {{/if}}
+
+                        {{!-- Reading time deliberately omitted from the hero — the audio player
+                             below shows the actual episode duration. --}}
+                        <ul class="flex flex-wrap items-center gap-x-4 gap-y-2 list-none p-0 m-0">
+                            {{#if authors}}<li class="font-sans text-sm font-medium" style="color: var(--color-text-muted);">{{t "with"}} {{authors separator=", " lastSeparator=" & " autolink="false"}}</li>{{/if}}
+                            <li class="font-sans text-sm font-medium" style="color: var(--color-text-muted);"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMM D, YYYY"}}</time></li>
+                        </ul>
+
+                        {{> audio-player src=""}}
+
+                        <script type="application/pod-html" data-pod-html>{{{html}}}</script>
+
+                        <a href="{{url}}" class="target-tap font-sans text-sm font-medium underline self-start" style="color: var(--color-accent);">{{t "Read the full show notes"}} →</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+    {{/foreach}}
+{{/if}}
+{{/is}}
+
+{{> subscribe-band}}
+
+<section class="px-6 sm:px-10 lg:px-20 py-20 sm:py-28">
+    <div class="mx-auto max-w-content">
+        <div class="mb-10 sm:mb-14">
+            <div class="eyebrow"><span class="eyebrow-text">{{plural pagination.total empty="ARCHIVE" singular="ARCHIVE · % EPISODE" plural="ARCHIVE · % EPISODES"}}</span></div>
+            <div class="mt-3 flex flex-wrap items-end justify-between gap-6">
+                <h2 class="font-sans text-[36px] sm:text-[44px] font-bold tracking-display m-0" style="color: var(--color-text);">{{t "Every episode."}}</h2>
+                {{#if tags}}
+                <div class="flex flex-wrap gap-2 pb-2">
+                    <a href="{{@site.url}}" class="chip chip--active">{{t "All"}}</a>
+                    {{#foreach tags limit="5"}}
+                        {{#unless internal}}
+                            <a href="{{url}}" class="chip">{{name}}</a>
+                        {{/unless}}
+                    {{/foreach}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+
+        <div class="post-feed">
+            {{#is "home"}}
+                {{#foreach posts from="2"}}
+                    {{> post-card}}
+                {{/foreach}}
+            {{else}}
+                {{#foreach posts}}
+                    {{> post-card}}
+                {{/foreach}}
+            {{/is}}
+            {{#unless posts.[1]}}
+                <p class="text-center font-serif text-lg py-12" style="color: var(--color-text-muted);">{{t "More episodes coming soon."}}</p>
+            {{/unless}}
+        </div>
+
+        {{#if pagination.next}}
+            <div class="flex justify-center mt-14">
+                <a href="{{page_url pagination.next}}" class="pill" style="border-color: var(--color-text);">
+                    {{t "Browse more episodes"}} <span class="pill__arrow" style="color: var(--color-accent);">→</span>
+                </a>
+            </div>
+        {{/if}}
+    </div>
+</section>
+
+{{#if @site.recommendations_enabled}}
+<section class="px-6 sm:px-10 lg:px-20 py-20 sm:py-24" style="background-color: var(--color-surface-alt);">
+    <div class="mx-auto max-w-content">
+        {{> eyebrow text="RECOMMENDED"}}
+        <h2 class="mt-3 mb-10 font-sans text-[32px] sm:text-[36px] font-bold tracking-title m-0" style="color: var(--color-text);">{{t "Sites we read"}}</h2>
+        {{recommendations limit="6"}}
+    </div>
+</section>
+{{/if}}
+
+{{#unless @member}}
+<section class="px-6 sm:px-10 lg:px-20 py-20 sm:py-24" style="background-color: var(--color-bg);">
+    <div class="mx-auto flex max-w-content flex-col items-start gap-10 lg:flex-row lg:items-center lg:justify-between">
+        <div class="max-w-md">
+            {{> eyebrow text="THE NEWSLETTER"}}
+            <h2 class="mt-3 font-sans text-[32px] sm:text-[40px] font-bold tracking-title leading-[1.05] m-0" style="color: var(--color-text);">{{t "A short note with every new episode."}}</h2>
+            <p class="mt-3 font-serif text-base" style="color: var(--color-text-muted);">{{t "No tracking, no sponsors, no algorithm. Just a heads-up when something new lands."}}</p>
+        </div>
+
+        <form data-members-form="signup" class="flex flex-col gap-2 w-full max-w-md">
+            <label for="pod-signup-email" class="sr-only">{{t "Your email address"}}</label>
+            <div class="flex flex-col items-stretch gap-2 sm:flex-row sm:gap-0">
+                <input id="pod-signup-email" data-members-email type="email" required placeholder="you@example.com" autocomplete="email"
+                    aria-describedby="pod-signup-help pod-signup-error"
+                    class="rounded-full px-6 py-3.5 text-[15px] sm:rounded-r-none sm:border-r-0"
+                    style="background-color: var(--color-surface); border: 1px solid var(--color-border-interactive); color: var(--color-text);">
+                <button type="submit" class="rounded-full px-7 py-3.5 text-sm font-semibold sm:rounded-l-none"
+                    style="background-color: var(--color-text); color: var(--color-bg);">{{t "Subscribe"}}</button>
+            </div>
+            <p id="pod-signup-help" class="font-sans text-xs" style="color: var(--color-text-muted);">{{t "No spam. Unsubscribe in one click."}}</p>
+            <p id="pod-signup-error" data-members-error role="alert" aria-live="polite"
+               class="font-sans text-xs m-0 min-h-[1em]" style="color: #B00020;"></p>
+            <p class="pod-signup-success font-sans text-xs m-0" role="status" aria-live="polite" style="color: var(--color-accent);">{{t "Check your email to confirm your subscription."}}</p>
+        </form>
+    </div>
+</section>
+{{/unless}}

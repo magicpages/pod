@@ -1,0 +1,73 @@
+<header class="pod-header sticky top-0 z-30 border-b px-6 sm:px-10 lg:px-20" style="background-color: var(--color-bg); border-color: var(--color-border);">
+    <div class="mx-auto flex h-20 max-w-content items-center justify-between">
+        <a href="{{@site.url}}" class="flex items-center gap-3 no-underline target-tap" style="color: var(--color-text);" aria-label="{{@site.title}} — home">
+            {{> waveform-mark}}
+            <span class="font-sans text-[20px] font-bold tracking-title">{{@site.title}}</span>
+        </a>
+
+        <nav class="flex items-center gap-6 sm:gap-9" aria-label="Main navigation">
+            {{navigation}}
+
+            {{!-- data-ghost-search wires the Cmd/Ctrl+K shortcut + opens Ghost's sodo-search overlay. --}}
+            <button type="button"
+                class="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
+                style="background-color: var(--color-surface-alt); color: var(--color-text-strong);"
+                data-ghost-search
+                aria-label="Search">
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                    <circle cx="7" cy="7" r="5"/>
+                    <path d="m11 11 3 3" stroke-linecap="round"/>
+                </svg>
+            </button>
+
+            <button type="button" class="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
+                style="background-color: var(--color-surface-alt); color: var(--color-text-strong);"
+                data-pod-toggle-scheme
+                aria-label="Toggle color scheme"
+                aria-pressed="false">
+                <svg data-icon-moon viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
+                    <path d="M6 0a6 6 0 1 0 7.99 7.99A7 7 0 0 1 6 0z"/>
+                </svg>
+                <svg data-icon-sun style="display:none;" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <circle cx="8" cy="8" r="3"/>
+                    <path d="M8 1v2M8 13v2M15 8h-2M3 8H1M12.95 3.05l-1.41 1.41M4.46 11.54l-1.41 1.41M12.95 12.95l-1.41-1.41M4.46 4.46L3.05 3.05"/>
+                </svg>
+            </button>
+
+            <a href="{{@site.url}}/subscribe/" class="pill pill--filled hidden sm:inline-flex" aria-label="Subscribe to {{@site.title}}">
+                <span class="h-1.5 w-1.5 rounded-full" style="background-color: var(--color-accent-500);"></span>
+                Subscribe
+            </a>
+
+            <button type="button"
+                class="flex sm:hidden h-9 w-9 items-center justify-center rounded-full transition-colors"
+                style="background-color: var(--color-surface-alt); color: var(--color-text-strong);"
+                data-pod-toggle-menu
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="pod-mobile-menu">
+                <svg data-icon-menu viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                    <path d="M3 6h14M3 10h14M3 14h14" stroke-linecap="round"/>
+                </svg>
+                <svg data-icon-close style="display:none;" viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                    <path d="M5 5l10 10M15 5L5 15" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </nav>
+    </div>
+
+    <div id="pod-mobile-menu"
+        data-pod-mobile-menu
+        class="hidden sm:hidden absolute left-0 right-0 top-full border-t"
+        style="background-color: var(--color-bg); border-color: var(--color-border);">
+        <nav class="mx-auto max-w-content px-6 py-6" aria-label="Mobile navigation">
+            {{> navigation type="mobile"}}
+            <div class="mt-4">
+                <a href="{{@site.url}}/subscribe/" class="pill pill--filled inline-flex" style="font-size: 14px;">
+                    <span class="h-1.5 w-1.5 rounded-full" style="background-color: var(--color-accent-500);"></span>
+                    Subscribe
+                </a>
+            </div>
+        </nav>
+    </div>
+</header>

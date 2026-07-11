@@ -1,0 +1,34 @@
+## Pod theme — Ghost routes.yaml
+##
+## To use this file:
+## 1. Visit Ghost Admin → Settings → Labs.
+## 2. Download your current routes.yaml.
+## 3. Merge the `routes:` block below into yours (keep your existing routes).
+## 4. Re-upload it via the Labs page.
+##
+## The /podcast/rss/ route is what podcatchers subscribe to — submit it to
+## Apple Podcasts, Spotify for Podcasters, etc.
+
+routes:
+  /podcast/rss/:
+    template: podcast/rss
+    content_type: text/xml
+  /subscribe/:
+    template: subscribe
+
+collections:
+  # The podcast collection — every post tagged "#podcast" (internal tag)
+  # is part of the show. Internal tags don't show on the public archive.
+  /podcast/:
+    permalink: /podcast/{slug}/
+    filter: tag:hash-podcast
+    template: index
+
+  # Everything else stays on the root collection.
+  /:
+    permalink: /{slug}/
+    template: index
+
+taxonomies:
+  tag: /tag/{slug}/
+  author: /author/{slug}/

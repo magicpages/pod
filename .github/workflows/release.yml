@@ -1,0 +1,69 @@
+name: Release
+
+# Changesets release flow:
+#   1. Contributors land PRs on main; each user-visible change includes a
+#      .changeset/*.md file (see CONTRIBUTING.md).
+#   2. When main has at least one changeset, this workflow opens/updates a
+#      "Version Packages" PR that bumps package.json + writes the accumulated
+#      changesets into CHANGELOG.md.
+#   3. Merging that PR clears the changeset directory and triggers this same
+#      workflow again — this time with no changesets, so `changesets/action`
+#      runs our `publish` script (`scripts/release.mjs`), which:
+#        - builds pod.zip
+#        - creates the vX.Y.Z tag
+#        - creates the GitHub Release with pod.zip attached
+#      Ghost admin's "Upload theme" flow needs a downloadable zip on the
+#      release page — that's the whole reason this workflow exists.
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Version PR / release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write # tag, push, create the GitHub Release
+      pull-requests: write # open + update the Version PR
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # changesets/action needs full history to detect what changed
+          # between releases and to push its Version PR commits.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Create Version PR or release
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # `changeset version` — bumps package.json + regenerates CHANGELOG
+          # from the accumulated .changeset/*.md files. Runs INSIDE the
+          # Version PR branch, not on main.
+          version: npm run version
+          # `scripts/release.mjs` — builds pod.zip, tags, creates the
+          # GitHub Release. Runs on main AFTER the Version PR merges.
+          publish: npm run release
+          commit: "chore: version"
+          title: "chore: version"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # `scripts/release.mjs` calls `gh release create`. The `gh` CLI
+          # is preinstalled on ubuntu-latest and reads `GH_TOKEN`.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
