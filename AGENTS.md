@@ -87,7 +87,8 @@ pod/
 ├── .changeset/               # Changeset markdown files + config
 └── .github/workflows/
     ├── ci.yml                # gscan + build + zip on push/PR
-    └── release.yml           # Version PR flow + release on merge
+    ├── release.yml           # Version PR flow + release on merge
+    └── deploy.yml            # release.published → deploy to pod.magicpages.co
 ```
 
 ## The Ghost integration contract
@@ -254,6 +255,15 @@ the publish step.
 
 `scripts/release.mjs` is idempotent: if the `vX.Y.Z` tag is already on
 `origin`, it exits 0 without re-tagging or re-uploading. Safe to re-run.
+
+**Auto-deploy to the demo.** `.github/workflows/deploy.yml` fires on
+`release: published` — it checks out the release tag, builds
+`assets/built/`, and hands off to `TryGhost/action-deploy-theme@v2` which
+uploads + activates the theme on `pod.magicpages.co` via the Ghost Admin
+API. Requires the `POD_GHOST_ADMIN_API_KEY` repository secret (staff /
+admin API key in `<id>:<hex_secret>` form). Pre-releases are skipped by
+`if: github.event.release.prerelease == false`. Other publishers who
+install Pod download `pod.zip` from the Releases page manually.
 
 ## How to work in this codebase
 

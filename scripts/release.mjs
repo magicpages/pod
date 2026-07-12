@@ -57,15 +57,19 @@ if (
 sh("npm run zip");
 
 // (5) Extract just this version's CHANGELOG section for the release notes.
-// The Keep-a-Changelog format we use puts each version under `## [X.Y.Z]`,
-// so we take everything from that heading up to the next `## [` line.
+// Match both Keep-a-Changelog-style `## [X.Y.Z]` (used in the initial
+// hand-written entry) and Changesets-style `## X.Y.Z` (used by
+// `changeset version` for every subsequent release). Section ends at the
+// next `## ` heading regardless of format, so mixed histories work.
 const changelog = fs.readFileSync(
     path.join(REPO_ROOT, "CHANGELOG.md"),
     "utf8"
 );
 const escaped = version.replace(/\./g, "\\.");
 const section = changelog.match(
-    new RegExp(`## \\[${escaped}\\][^\\n]*\\n([\\s\\S]*?)(?=\\n## \\[|$)`)
+    new RegExp(
+        `##\\s+\\[?${escaped}\\]?[^\\n]*\\n([\\s\\S]*?)(?=\\n##\\s+\\[?\\d|$)`
+    )
 );
 const notes = section
     ? section[1].trim()

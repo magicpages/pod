@@ -1,0 +1,61 @@
+name: Deploy to pod.magicpages.co
+
+# Fires when release.yml has finished cutting a new release. The tag ref
+# from that release is checked out, the build is run, and the official
+# TryGhost/action-deploy-theme uploads + activates the theme via the Ghost
+# Admin API. Only the demo site (pod.magicpages.co) is targeted — other
+# users installing Pod pull `pod.zip` off the GitHub Release page manually.
+
+on:
+  release:
+    types: [published]
+
+# One deploy at a time, don't cancel in flight — a mid-upload cancel could
+# leave the site with an inconsistent theme.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Upload + activate on pod.magicpages.co
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Skip pre-releases — only ship stable tags to the demo. `github.event.
+    # release.prerelease` is set by GitHub based on whether the tag was
+    # marked as such at Release-create time.
+    if: github.event.release.prerelease == false
+    environment:
+      # A Deployment environment gives us a URL on the run summary + lets us
+      # gate future changes behind manual approvals if we ever want to.
+      name: pod-magicpages-co
+      url: https://pod.magicpages.co
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Check out the exact tag the release was cut from, not `main`
+          # (which may have drifted since the Version PR merged).
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # The action zips the checkout after this step runs, so build output
+      # under `assets/built/` needs to exist on disk first (it's gitignored).
+      - name: Build assets
+        run: npm run build
+
+      - name: Deploy theme
+        uses: TryGhost/action-deploy-theme@v2.0.0
+        with:
+          api-url: https://pod.magicpages.co
+          api-key: ${{ secrets.POD_GHOST_ADMIN_API_KEY }}
+          theme-name: pod
