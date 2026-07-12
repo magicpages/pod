@@ -10,6 +10,14 @@ Pod turns your Ghost site into a full podcast home: a hero episode with a
 built-in audio player, an iTunes-spec RSS feed, and a `/subscribe/` landing
 page that meets your listeners in whichever app they use.
 
+**No separate podcast host required.** The point of Pod is that your Ghost
+site *is* the podcast host. Upload your MP3s to Ghost like any other file,
+add a few `pod:*` markers in the episode's code-injection foot, and the
+theme emits a full iTunes + Podcasting 2.0 RSS feed at `/podcast/rss/`.
+Submit that URL to Apple Podcasts, Spotify for Podcasters, Overcast, and
+the rest — they read your feed straight from your domain. One site, one
+subscription, one place your audience talks to you.
+
 <table>
   <tr>
     <td width="50%"><img src="./docs/screenshot-episode.png" alt="Episode page"></td>
