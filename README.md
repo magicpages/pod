@@ -2,9 +2,24 @@
 
 A Ghost theme for podcasters. Made by [Magic Pages](https://www.magicpages.co).
 
+**Live demo →** [pod.magicpages.co](https://pod.magicpages.co)
+
+![Pod home page](./screenshot-desktop.png)
+
 Pod turns your Ghost site into a full podcast home: a hero episode with a
 built-in audio player, an iTunes-spec RSS feed, and a `/subscribe/` landing
 page that meets your listeners in whichever app they use.
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/screenshot-episode.png" alt="Episode page"></td>
+    <td width="50%"><img src="./docs/screenshot-subscribe.png" alt="/subscribe/ landing page"></td>
+  </tr>
+  <tr>
+    <td><em>Episode page — sticky player, chapter list, show notes</em></td>
+    <td><em>/subscribe/ — 16 podcast apps, deep-linked</em></td>
+  </tr>
+</table>
 
 - **10-16 podcast apps** — Apple Podcasts, Spotify, Overcast, Pocket Casts,
   Castro, Castbox, Podcast Addict, AntennaPod, Podverse, Player FM, gPodder,

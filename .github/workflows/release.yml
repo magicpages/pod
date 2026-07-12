@@ -62,6 +62,12 @@ jobs:
           publish: npm run release
           commit: "chore: version"
           title: "chore: version"
+          # `scripts/release.mjs` already runs `gh release create` with
+          # pod.zip attached, and the action's post-publish hook would
+          # otherwise try to create a second Release for the same tag and
+          # fail with a 422 (`Validation Failed: … tag_name already_exists`).
+          # Disabling the hook keeps the run green.
+          createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # `scripts/release.mjs` calls `gh release create`. The `gh` CLI
