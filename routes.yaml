@@ -1,0 +1,30 @@
+# Pod theme — routes.yaml
+#
+# Ghost's default routes.yaml + the two routes Pod needs:
+#
+#   /podcast/rss/  — iTunes-spec + Podcasting 2.0 RSS feed served as text/xml.
+#                    This is the URL you submit to Apple Podcasts, Spotify,
+#                    Overcast, and the rest.
+#   /subscribe/    — the podcast-app landing page that meets listeners in
+#                    whichever app they already use.
+#
+# To install: Ghost admin → Settings → Labs → Upload routes.yaml → pick
+# this file. Replaces whatever's currently there. If you have your own
+# route customizations already, merge them in — this file is the starting
+# point for a fresh Ghost site.
+
+routes:
+  /podcast/rss/:
+    template: podcast/rss
+    content_type: text/xml
+  /subscribe/:
+    template: subscribe
+
+collections:
+  /:
+    permalink: /{slug}/
+    template: index
+
+taxonomies:
+  tag: /tag/{slug}/
+  author: /author/{slug}/

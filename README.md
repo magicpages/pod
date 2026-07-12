@@ -57,9 +57,11 @@ That's the theme itself. To turn on the podcast pieces, you'll also want to:
   author, owner name/email, category, explicit flag, type. These populate the
   RSS feed's channel metadata.
 - Install the bundled **`routes.yaml`** (Settings → Labs → Upload routes) so
-  that `/podcast/rss/` and `/subscribe/` resolve. See
-  `routes.yaml.example` in this repo — merge those two entries into whatever
-  routes file you already use.
+  that `/podcast/rss/` and `/subscribe/` resolve. The file at
+  [`routes.yaml`](./routes.yaml) is Ghost's default routes file plus the two
+  entries Pod needs — upload it as-is on a fresh site. If you've already
+  customised your routes, merge the two `routes:` entries from this file
+  into yours instead of replacing it.
 - Tag your podcast posts with the internal `#podcast` tag. That's the filter
   the RSS feed and archive templates read from.
 
@@ -191,7 +193,7 @@ pod/
 ├── subscribe.hbs           # /subscribe/ landing page
 ├── default.hbs / index.hbs / post.hbs / page.hbs
 ├── tag.hbs / author.hbs / error*.hbs
-├── routes.yaml.example     # Routes for /podcast/rss/ + /subscribe/
+├── routes.yaml             # Ghost default routes + /podcast/rss/ + /subscribe/
 ├── tailwind.config.js / postcss.config.js / vite.config.js
 ├── package.json            # Theme metadata + custom settings + build scripts
 ├── CHANGELOG.md

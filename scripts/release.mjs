@@ -82,9 +82,12 @@ fs.writeFileSync(notesFile, notes);
 sh(`git tag -a ${tag} -m "Release ${tag}"`);
 sh(`git push origin ${tag}`);
 
-// (5) GitHub Release with pod.zip attached.
+// (5) GitHub Release with pod.zip + routes.yaml attached. Two assets on
+// purpose: publishers who want to try Pod without unpacking a zip can
+// grab routes.yaml directly from the release page and upload it to
+// Ghost's Labs UI in one click.
 sh(
-    `gh release create ${tag} pod.zip --title "Pod ${tag}" --notes-file "${notesFile}"`
+    `gh release create ${tag} pod.zip routes.yaml --title "Pod ${tag}" --notes-file "${notesFile}"`
 );
 
 fs.rmSync(notesFile, { force: true });

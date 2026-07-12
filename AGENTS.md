@@ -78,7 +78,7 @@ pod/
 ├── index.hbs                 # Home + tag + archive collections
 ├── post.hbs                  # Single episode
 ├── page.hbs / tag.hbs / author.hbs / error*.hbs
-├── routes.yaml.example       # /podcast/rss/ + /subscribe/ routing snippet
+├── routes.yaml               # Ghost defaults + /podcast/rss/ + /subscribe/
 ├── screenshot-{desktop,mobile}.png  # Marketplace + README hero screenshots
 ├── docs/                     # README-only supplementary screenshots
 ├── scripts/
@@ -96,13 +96,17 @@ pod/
 Pod is a **plain Ghost theme** — no admin patches, no server config changes.
 Ghost 5.93+ loads it via **Settings → Design → Change theme → Upload theme**.
 
-**Routes** — `routes.yaml.example` at the repo root ships the two entries Pod
-needs: `/podcast/rss/` (renders `podcast/rss.hbs` with `content_type: text/xml`)
-and `/subscribe/` (renders `subscribe.hbs`). Publishers merge these into their
-existing routes file and upload it via **Settings → Labs → Upload routes**.
-Missing routes → RSS feed returns 404 and the subscribe page falls back to a
-404. Both routes are optional; the theme still works without them, just without
-those two surfaces.
+**Routes** — `routes.yaml` at the repo root is a complete ready-to-upload file:
+Ghost's default routes (root collection + tag/author taxonomies) plus the two
+entries Pod needs — `/podcast/rss/` (renders `podcast/rss.hbs` with
+`content_type: text/xml`) and `/subscribe/` (renders `subscribe.hbs`). Publishers
+on a fresh Ghost site upload it as-is via **Settings → Labs → Upload routes**.
+Publishers who've customised their routes merge the two `routes:` entries in
+instead. Missing routes → RSS feed returns 404 and the subscribe page falls
+back to a 404. Both routes are optional; the theme still works without them,
+just without those two surfaces. The release workflow attaches `routes.yaml`
+as a separate GitHub Release asset so publishers can grab it without
+unpacking `pod.zip`.
 
 **Custom theme settings** live in `package.json` under `config.custom`. Ghost's
 limit is 20 settings; Pod is at 20. Any new setting requires cutting an existing

@@ -34,7 +34,7 @@ const INCLUDES = [
     "CONTRIBUTING.md",
     "LICENSE",
     "THIRD-PARTY-NOTICES.md",
-    "routes.yaml.example",
+    "routes.yaml",
     "screenshot-desktop.png",
     "screenshot-mobile.png",
 ];
