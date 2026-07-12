@@ -1,17 +1,30 @@
 name: Deploy to pod.magicpages.co
 
-# Fires when release.yml has finished cutting a new release. The tag ref
-# from that release is checked out, the build is run, and the official
-# TryGhost/action-deploy-theme uploads + activates the theme via the Ghost
-# Admin API. Only the demo site (pod.magicpages.co) is targeted — other
-# users installing Pod pull `pod.zip` off the GitHub Release page manually.
+# Fires whenever release.yml finishes successfully on main. We can't use
+# `on: release: published` here because GitHub's anti-loop rule doesn't
+# fire that event when the release was created by `GITHUB_TOKEN` (which
+# scripts/release.mjs uses via `gh release create`). Same rule blocks
+# `on: push: tags: v*`. workflow_run is the officially-recommended
+# workaround — it runs in the context of the workflow that triggered it
+# and isn't token-gated.
+#
+# The Release workflow runs on every push to main; most of those runs are
+# no-ops (there was no accumulated changeset to publish, so release.mjs
+# exits without creating a tag). To avoid a pointless deploy on every
+# push, the guard step below reads package.json's version and checks the
+# remote for a matching vX.Y.Z tag. If the tag exists, we deploy the
+# theme at that tag. If not, we skip.
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+    branches: [main]
+  # Manual kick for one-off redeploys (accidental theme swap in Ghost admin,
+  # a hotfix to Cloudflare cache, etc.). Runs against `main`'s current
+  # package.json version — assumes that vX.Y.Z tag exists on origin.
+  workflow_dispatch:
 
-# One deploy at a time, don't cancel in flight — a mid-upload cancel could
-# leave the site with an inconsistent theme.
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
@@ -24,36 +37,57 @@ jobs:
     name: Upload + activate on pod.magicpages.co
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Skip pre-releases — only ship stable tags to the demo. `github.event.
-    # release.prerelease` is set by GitHub based on whether the tag was
-    # marked as such at Release-create time.
-    if: github.event.release.prerelease == false
+    # For workflow_run: only run when the Release workflow it's chained off
+    # of succeeded. For workflow_dispatch: always run (manual override).
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     environment:
-      # A Deployment environment gives us a URL on the run summary + lets us
-      # gate future changes behind manual approvals if we ever want to.
       name: pod-magicpages-co
       url: https://pod.magicpages.co
     steps:
       - uses: actions/checkout@v4
         with:
-          # Check out the exact tag the release was cut from, not `main`
-          # (which may have drifted since the Version PR merged).
-          ref: ${{ github.event.release.tag_name }}
+          # Start on main; the guard below picks the released tag.
+          ref: main
+
+      - name: Discover released tag
+        id: tag
+        run: |
+          version=$(node -p "require('./package.json').version")
+          tag="v${version}"
+          if git ls-remote --tags origin "refs/tags/${tag}" | grep -q "${tag}"; then
+            echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+            echo "  matched tag: ${tag}"
+          else
+            echo "  no ${tag} tag on origin — this Release run was a no-op, skipping deploy"
+          fi
+
+      - name: Check out release tag
+        if: steps.tag.outputs.tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.tag.outputs.tag }}
 
       - uses: actions/setup-node@v4
+        if: steps.tag.outputs.tag
         with:
           node-version: 20
           cache: npm
 
       - name: Install
+        if: steps.tag.outputs.tag
         run: npm ci
 
-      # The action zips the checkout after this step runs, so build output
-      # under `assets/built/` needs to exist on disk first (it's gitignored).
+      # The deploy action zips the checkout after this step runs, so build
+      # output under `assets/built/` needs to exist on disk first (it's
+      # gitignored).
       - name: Build assets
+        if: steps.tag.outputs.tag
         run: npm run build
 
       - name: Deploy theme
+        if: steps.tag.outputs.tag
         uses: TryGhost/action-deploy-theme@v2.0.0
         with:
           api-url: https://pod.magicpages.co
