@@ -2,13 +2,14 @@
 
       URL patterns are taken from Nathan Gathright's podcast platform
       catalog (https://nathangathright.github.io/podcast-platform-links/)
-      and verified against each platform's own documentation. Three buckets:
+      and verified against each platform's own documentation. Two buckets:
 
-        A. RSS-derivable     Apple, Overcast, Pocket Casts, Castro,
+        A. RSS-derivable     Apple (with optional apple.co override),
+                             Overcast, Pocket Casts, Castro,
                              Podcast Addict, AntennaPod, Podverse,
                              Player FM, gPodder, RSS
         C. Publisher-only    Spotify, Amazon Music, YouTube Music,
-                             iHeartRadio, Castbox, Pandora
+                             Castbox
                              (no public RSS-to-subscribe URL — pill only
                               renders when the matching @custom URL is set)
 
@@ -21,7 +22,12 @@
 
 <ul class="subscribe-grid grid grid-cols-1 sm:grid-cols-2 gap-3 m-0 p-0 list-none">
 
-    <li><a href="podcast://{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#A445F5;"></span><span>Apple Podcasts</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
+    {{!-- Apple Podcasts: prefer the publisher's Apple show URL when set
+         (works on every OS + browser, including desktop and Android). Fall
+         back to the podcast:// URL scheme when unset (works on iOS/macOS
+         Podcasts.app, inert elsewhere — better than nothing on day one
+         before the publisher has an Apple show URL). --}}
+    <li><a href="{{#if @custom.subscribe_apple_url}}{{@custom.subscribe_apple_url}}{{else}}podcast://{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/{{/if}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#A445F5;"></span><span>Apple Podcasts</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
 
     {{#if @custom.subscribe_spotify_url}}
     <li><a href="{{@custom.subscribe_spotify_url}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#1DB954;"></span><span>Spotify</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
@@ -62,18 +68,6 @@
     <li><a href="https://player.fm/subscribe?id={{encode @site.url}}%2Fpodcast%2Frss%2F" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#E2522A;"></span><span>Player FM</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
 
     <li><a href="https://gpodder.net/subscribe?url={{encode @site.url}}%2Fpodcast%2Frss%2F" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#9CC542;"></span><span>gPodder</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
-
-    {{!-- Pandora: requires the show's PC:<id> URL — no general RSS or search
-         URL maps reliably. Pill only renders when the publisher sets the URL. --}}
-    {{#if @custom.subscribe_pandora_url}}
-    <li><a href="{{@custom.subscribe_pandora_url}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#005483;"></span><span>Pandora</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
-    {{/if}}
-
-    {{!-- iHeartRadio: same constraint as Pandora — no public subscribe URL
-         that resolves from RSS or search. Pill renders only when set. --}}
-    {{#if @custom.subscribe_iheart_url}}
-    <li><a href="{{@custom.subscribe_iheart_url}}" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#C6002B;"></span><span>iHeartRadio</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
-    {{/if}}
 
     <li><a href="{{@site.url}}/podcast/rss/" class="pill pill--grid" target="_blank" rel="noopener"><span class="pill__dot" style="--dot-color:#F26522;"></span><span>RSS feed</span><span class="pill__arrow" aria-hidden="true">↗</span></a></li>
 

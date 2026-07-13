@@ -69,13 +69,16 @@ First public release.
 ### /subscribe/ landing page
 
 - One-link-to-rule-them-all page hosted on the publisher's own domain.
-- Full 10-16 platform grid, dynamic per publisher configuration:
-  - **Always shown** (URL derived from the RSS feed): Apple Podcasts, Overcast,
-    Pocket Casts, Castro, Podcast Addict, AntennaPod, Podverse, Player FM,
-    gPodder, RSS.
+- Full 11-15 platform grid, dynamic per publisher configuration:
+  - **Always shown** (URL derived from the RSS feed): Apple Podcasts,
+    Overcast, Pocket Casts, Castro, Podcast Addict, AntennaPod, Podverse,
+    Player FM, gPodder, RSS.
+  - **Apple Podcasts URL override** (optional): if the publisher pastes
+    their `podcasts.apple.com/…` show URL into `subscribe_apple_url`, the
+    Apple pill uses that instead of the iOS-only `podcast://` URL scheme
+    — one working button for listeners on every OS + browser.
   - **Conditional** (renders only when publisher supplies the show URL via
-    theme settings): Spotify, Amazon Music, YouTube Music, iHeartRadio,
-    Castbox, Pandora.
+    theme settings): Spotify, Amazon Music, YouTube Music, Castbox.
 - Copy-RSS-URL card for power users, with clipboard integration.
 - URL patterns validated against Nathan Gathright's podcast platform catalog
   and each platform's own documentation.

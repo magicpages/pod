@@ -19,12 +19,13 @@
       inverted border/text. Light surfaces should pass surface="light" so we
       drop pill--platform and the plain .pill rules apply. --}}
 
-{{!-- Apple Podcasts: the podcast:// scheme is recognised by iOS and macOS
-     Podcasts.app — they fetch the RSS at the host+path and subscribe
-     directly, with no Apple-directory submission required. On Android /
-     desktop the link is inert, which is fine: those platforms have other
-     pills below in the band that DO work for them. --}}
-<a href="podcast://{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/"
+{{!-- Apple Podcasts: prefer the publisher's Apple show URL when they've
+     set one (works on every OS + browser). Fall back to the podcast://
+     URL scheme when unset — iOS + macOS Podcasts.app recognise it and
+     fetch the RSS directly, no Apple-directory submission required. On
+     Android / desktop the fallback is inert, which is fine: other pills
+     in the band DO work for those listeners. --}}
+<a href="{{#if @custom.subscribe_apple_url}}{{@custom.subscribe_apple_url}}{{else}}podcast://{{#foreach (split @site.url separator="://")}}{{#unless @first}}{{this}}{{/unless}}{{/foreach}}/podcast/rss/{{/if}}"
    class="pill {{#match surface "!=" "light"}}pill--platform{{/match}}" target="_blank" rel="noopener">
     <span>Apple Podcasts</span><span class="pill__arrow" aria-hidden="true">↗</span>
 </a>

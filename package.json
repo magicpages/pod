@@ -153,6 +153,12 @@
         "group": "homepage",
         "description": "Lightning node pubkey (starts with 02… or 03…). Required for <podcast:value>."
       },
+      "subscribe_apple_url": {
+        "type": "text",
+        "default": "",
+        "group": "homepage",
+        "description": "Apple Podcasts show URL (podcasts.apple.com/…). Empty falls back to the podcast:// URL scheme, which only works on iOS/macOS."
+      },
       "subscribe_spotify_url": {
         "type": "text",
         "default": "",
@@ -171,23 +177,11 @@
         "group": "homepage",
         "description": "YouTube Music show URL. Empty hides the pill."
       },
-      "subscribe_iheart_url": {
-        "type": "text",
-        "default": "",
-        "group": "homepage",
-        "description": "iHeartRadio show URL. Empty hides the pill."
-      },
       "subscribe_castbox_url": {
         "type": "text",
         "default": "",
         "group": "homepage",
         "description": "Castbox channel URL. Empty hides the pill."
-      },
-      "subscribe_pandora_url": {
-        "type": "text",
-        "default": "",
-        "group": "homepage",
-        "description": "Pandora podcast URL. Empty hides the pill."
       },
       "show_post_cta": {
         "type": "boolean",

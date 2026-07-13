@@ -70,7 +70,7 @@ pod/
 │   ├── pod-duration.hbs      # Duration read from pod:duration marker
 │   ├── subscribe-band.hbs    # Home + archive "listen on" band
 │   ├── subscribe-pills.hbs   # Top-5 pills + more-link (shared surface)
-│   └── subscribe-grid.hbs    # Full 10-16 platform grid on /subscribe/
+│   └── subscribe-grid.hbs    # Full 11-15 platform grid on /subscribe/
 ├── podcast/
 │   └── rss.hbs               # iTunes-spec + Podcasting 2.0 feed
 ├── subscribe.hbs             # /subscribe/ landing page
@@ -113,7 +113,9 @@ limit is 20 settings; Pod is at 20. Any new setting requires cutting an existing
 one — no exceptions. Existing settings cover: color scheme default, iTunes
 author/owner/category/explicit/type, PC2.0 GUID/locked/funding-url/value-type/
 value-address, six subscribe-URL slots for closed catalogs (Spotify, Amazon,
-YouTube Music, iHeart, Castbox, Pandora), and the two post-CTA controls.
+YouTube Music, Castbox — plus an optional Apple show URL override that
+turns the iOS-only `podcast://` scheme into a cross-platform link), and
+the two post-CTA controls.
 
 **Per-episode metadata via `pod:*` markers** — Ghost's post-metadata surface
 is thin, so per-episode data that doesn't fit a native field is passed via
@@ -152,7 +154,7 @@ The theme's advertised surface, most of which is exercised on
   player left, show notes right); client-rendered chapter list from
   `pod:chapter=` markers; end-of-episode CTA card; prev/next episode nav;
   comments when enabled.
-- **`/subscribe/` landing page** — a 10-16 platform grid, dynamic per
+- **`/subscribe/` landing page** — a 11-15 platform grid, dynamic per
   publisher config. Always shown for open-RSS apps (Apple, Overcast, Pocket
   Casts, Castro, Podcast Addict, AntennaPod, Podverse, Player FM, gPodder,
   RSS). Conditional for closed catalogs (Spotify, Amazon, YouTube Music,

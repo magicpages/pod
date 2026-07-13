@@ -29,11 +29,11 @@ subscription, one place your audience talks to you.
   </tr>
 </table>
 
-- **10-16 podcast apps** — Apple Podcasts, Spotify, Overcast, Pocket Casts,
+- **11-15 podcast apps** — Apple Podcasts, Spotify, Overcast, Pocket Casts,
   Castro, Castbox, Podcast Addict, AntennaPod, Podverse, Player FM, gPodder,
-  Pandora, iHeartRadio, Amazon Music, YouTube Music, RSS. Each one uses the
-  deepest possible link — custom URL schemes where they exist, publisher-
-  provided show URLs for closed catalogs.
+  Amazon Music, YouTube Music, RSS. Each one uses the deepest possible link
+  — custom URL schemes where they exist, publisher-provided show URLs for
+  closed catalogs.
 - **Podcast-native RSS** — iTunes-spec feed with per-episode audio,
   duration, episode / season / type, and Podlove Simple Chapters. Passes
   Apple Podcasts and Spotify validators.
@@ -114,19 +114,16 @@ All settings live in **Ghost admin → Design → Site-wide** once Pod is active
 | `itunes_category`           | Primary Apple Podcasts category. |
 | `itunes_explicit`           | Channel-level explicit flag (per-episode override via `pod:explicit=`). |
 | `itunes_type`               | `episodic` (latest first) or `serial` (oldest first). |
+| `subscribe_apple_url`       | Apple Podcasts show URL. Empty falls back to the `podcast://` URL scheme, which only works on iOS/macOS. Set this to your `podcasts.apple.com/…` URL after Apple approves your feed. |
 | `subscribe_spotify_url`     | Spotify show URL — required for the Spotify pill to appear. |
 | `subscribe_amazon_url`      | Amazon Music show URL. |
 | `subscribe_youtube_url`     | YouTube Music show URL. |
-| `subscribe_iheart_url`      | iHeartRadio show URL. |
 | `subscribe_castbox_url`     | Castbox channel URL. |
-| `subscribe_pandora_url`     | Pandora podcast URL. |
 | `podcast_guid`              | Podcasting 2.0 `<podcast:guid>` — a UUIDv5 derived from the feed URL. Generate at [podcastindex.org/namespace/1.0#guid](https://podcastindex.org/namespace/1.0#guid). Persists across host changes. |
 | `podcast_locked`            | `yes`/`no`. `yes` means other hosts should not import this feed. |
 | `podcast_funding_url`       | Where listeners can support the show. Leave empty to fall back to Ghost's built-in tipjar (Portal → Support) when donations are enabled in your Ghost admin. |
 | `podcast_value_type`        | `lightning` enables Value 4 Value payments. `none` disables the tag. |
-| `podcast_value_method`      | Payment method — `keysend` is standard for Lightning. |
 | `podcast_value_address`     | Lightning node pubkey. Required for the `<podcast:value>` tag. |
-| `podcast_value_suggested`   | Suggested amount per minute in Bitcoin (default 5,000 sats/min). |
 | `show_post_cta`             | Whether to render the "Keep Listening" CTA card at the end of each episode. |
 | `post_cta_heading`          | Heading for the CTA card. |
 
