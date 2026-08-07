@@ -106,7 +106,7 @@ class PodPlayer {
 
   #renderWaveform() {
     if (!this.scrub) return;
-    this.scrub.innerHTML = '';
+    this.scrub.replaceChildren();
 
     const rand = seededRandom(hashStringToSeed(this.src));
     for (let i = 0; i < WAVEFORM_BAR_COUNT; i++) {
@@ -345,15 +345,33 @@ function renderChapterSidebar() {
       return;
     }
 
-    listEl.innerHTML = items
-      .map(
-        ({ ts, label }) => `
-        <li class="pod-chapter flex items-center gap-3 px-5 py-3 cursor-pointer" data-pod-seek="${ts}">
-          <span class="font-mono text-[11px]" style="color: var(--color-text-muted);">${ts}</span>
-          <span class="font-sans text-[13px]" style="color: var(--color-text-strong);">${label}</span>
-        </li>`,
-      )
-      .join('');
+    // Built as DOM nodes rather than an innerHTML template on purpose. `label`
+    // is whatever the author put after the pipe in the chapter comment, and the
+    // capture group only excludes `>` — which isn't enough to make it inert,
+    // because the closing `</span>` of the template supplies the `>` that would
+    // terminate a tag opened inside the label. textContent sidesteps that
+    // entirely and lets chapter titles contain `<`, `&` and quotes verbatim.
+    listEl.replaceChildren(
+      ...items.map(({ ts, label }) => {
+        const li = document.createElement('li');
+        li.className =
+          'pod-chapter flex items-center gap-3 px-5 py-3 cursor-pointer';
+        li.dataset.podSeek = ts;
+
+        const tsEl = document.createElement('span');
+        tsEl.className = 'font-mono text-[11px]';
+        tsEl.style.color = 'var(--color-text-muted)';
+        tsEl.textContent = ts;
+
+        const labelEl = document.createElement('span');
+        labelEl.className = 'font-sans text-[13px]';
+        labelEl.style.color = 'var(--color-text-strong)';
+        labelEl.textContent = label;
+
+        li.append(tsEl, labelEl);
+        return li;
+      }),
+    );
   });
 }
 
