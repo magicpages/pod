@@ -28,6 +28,14 @@ the next browser refresh — no rebuild needed. Asset changes
 (`assets/css/*`, `assets/js/*`) require `npm run dev` or `npm run build` to
 regenerate `assets/built/`.
 
+**`assets/built/` is committed, and your PR needs to include it.** Ghost can
+install a theme straight from a GitHub repo, and that install path only sees
+tracked files — so the build output lives in Git, the same way Casper and
+Source do it. Run `npm run build` before committing any CSS or JS change and
+include the regenerated files; CI rebuilds and fails the PR if what you
+committed doesn't match its sources. Tailwind scans the `.hbs` files too, so a
+template change that introduces a new utility class is also a CSS change.
+
 ## Where things live
 
 ```
@@ -36,7 +44,7 @@ pod/
 │   ├── css/main.css        # Tailwind entry
 │   ├── js/main.js          # Player + color-scheme + Pod meta hydration
 │   ├── fonts/              # Self-hosted woff2 sources
-│   └── built/              # Vite output (gitignored)
+│   └── built/              # Vite output (committed — see above)
 ├── locales/
 │   └── en.json + de/fr/es/uk/it.json
 ├── partials/               # Reusable Handlebars partials

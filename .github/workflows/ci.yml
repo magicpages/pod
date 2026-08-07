@@ -39,6 +39,24 @@ jobs:
       - name: Build
         run: npm run build
 
+      # `assets/built/` is committed so that installing the theme straight from
+      # this repo's zipball yields working CSS/JS. That only holds while the
+      # committed output matches its sources, so fail the PR when a change to
+      # assets/css or assets/js lands without a rebuild. The build is
+      # byte-reproducible (fixed output filenames, no content hashes, no
+      # sourcemaps), so a dirty tree here is real drift rather than a flake.
+      # `git status` rather than `git diff` — it also catches build output that
+      # is new-and-untracked, not just modified.
+      - name: Verify committed assets/built is current
+        run: |
+          drift=$(git status --porcelain -- assets/built)
+          if [ -n "$drift" ]; then
+            echo "$drift"
+            echo "::error::assets/built/ does not match a fresh build. Run 'npm run build' and commit the result."
+            exit 1
+          fi
+          echo "  assets/built/ matches a fresh build"
+
       - name: Package release zip
         run: npm run zip
 

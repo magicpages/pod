@@ -1,0 +1,38 @@
+# Ghost can install a theme directly from GitHub — admin's "install from
+# GitHub" flow (and the Admin API's `?source=github&ref=magicpages/pod`)
+# downloads https://api.github.com/repos/magicpages/pod/zipball, which is a
+# `git archive` of the default branch. Two consequences shape this file:
+#
+#   1. Only *tracked* files land in that archive, so `assets/built/` must be
+#      committed (see .gitignore) or the installed theme 404s on its own CSS
+#      and JS.
+#   2. The archive honours `export-ignore`, so everything that exists to
+#      develop the theme rather than to run it can be kept out of the copy
+#      Ghost unpacks into content/themes/.
+#
+# Keep this list in sync with the INCLUDES array in scripts/zip.mjs, which
+# does the equivalent filtering for the released pod.zip.
+
+/.changeset          export-ignore
+/.github             export-ignore
+/.gitattributes      export-ignore
+/.gitignore          export-ignore
+/AGENTS.md           export-ignore
+/CONTRIBUTING.md     export-ignore
+/docs                export-ignore
+/package-lock.json   export-ignore
+/postcss.config.js   export-ignore
+/scripts             export-ignore
+/tailwind.config.js  export-ignore
+/vite.config.js      export-ignore
+
+# Deliberately shipped, so don't add these to the list above:
+#   licenses/, THIRD-PARTY-NOTICES.md  — the bundled woff2 fonts are OFL-1.1,
+#                                        which requires the licence to travel
+#                                        with the fonts.
+#   routes.yaml                        — publishers need it for /podcast/rss/.
+#   screenshot-*.png                   — Ghost admin's theme preview.
+
+# Vite output: committed for the reason above, but generated — collapse it in
+# review diffs so a CSS tweak doesn't read as a 30 kB change.
+/assets/built/** linguist-generated=true

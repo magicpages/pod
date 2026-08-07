@@ -79,9 +79,11 @@ jobs:
         if: steps.tag.outputs.tag
         run: npm ci
 
-      # The deploy action zips the checkout after this step runs, so build
-      # output under `assets/built/` needs to exist on disk first (it's
-      # gitignored).
+      # `assets/built/` is committed, so the checkout above already has usable
+      # output and the deploy action (which zips the checkout) would succeed
+      # without this step. Rebuild anyway: it costs a few seconds and means a
+      # deploy always ships output built from the tagged sources, even if a
+      # commit somehow slipped past CI's staleness check.
       - name: Build assets
         if: steps.tag.outputs.tag
         run: npm run build
