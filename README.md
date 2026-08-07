@@ -51,6 +51,11 @@ subscription, one place your audience talks to you.
    select the zip.
 3. Activate Pod.
 
+A release zip is a specific version, which is what you want on a production
+site. Installing from this repository directly — Ghost's **install from
+GitHub** option, or `magicpages/pod` as the theme source — also works and
+tracks `main`.
+
 That's the theme itself. To turn on the podcast pieces, you'll also want to:
 
 - Set the **podcast custom settings** (Design → Site-wide → Homepage): iTunes
@@ -175,7 +180,7 @@ pod/
 │   ├── js/main.js          # Player + color-scheme + Pod meta hydration
 │   ├── fonts/              # Self-hosted woff2 sources
 │   ├── img/default-cover.jpg  # Shipped RSS artwork fallback (3000×3000)
-│   └── built/              # Vite output (gitignored — built by npm run build)
+│   └── built/              # Vite output (committed; regenerate with npm run build)
 ├── locales/
 │   ├── en.json + de/fr/es/uk/it.json
 ├── partials/               # Reusable Handlebars partials

@@ -5,7 +5,10 @@
 node_modules/
 
 # Build output
-assets/built/
+# `assets/built/` is deliberately NOT ignored — see .gitattributes. Ghost can
+# install a theme straight from a repo's default-branch zipball, which carries
+# only tracked files, so the Vite output has to be committed for that install
+# path to produce a working theme. Same convention as Casper and Source.
 dist/
 *.log
 
