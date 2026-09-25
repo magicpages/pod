@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.5
+
+### Patch Changes
+
+- 80c3f91: Subscribe surface cleanup:
+
+  - **New `subscribe_apple_url` custom setting.** When set, Pod's Apple Podcasts button uses the publisher's Apple show URL (`podcasts.apple.com/…`) instead of the iOS-only `podcast://` URL scheme — one working button for listeners on every OS + browser. When unset, the pill falls back to `podcast://` so day-one installs still get an Apple pill that works for iOS listeners.
+  - **Dropped `subscribe_iheart_url` + `subscribe_pandora_url`.** Both platforms are US-only and account for a small and shrinking share of podcast listeners; YouTube Music (which we keep) has overtaken Pandora in the US, and iHeart skews heavily toward its own owned-and-operated shows. Publishers who need those buttons can add them via a theme edit.
+  - Custom-setting count goes from 20 to 19 (freeing one slot for future use).
+
+- ea53182: Chapter titles in the episode sidebar are now rendered as text rather than markup. A title containing `<`, `&` or a quote used to be parsed as HTML — so `Q&A` could come out mangled, and a title crafted to open an HTML tag could get that tag built into the page, because the surrounding template supplied the `>` needed to close it. Chapter titles now display verbatim, whatever characters they contain.
+- 2e9130c: Fixed unstyled sites when Pod is installed straight from GitHub rather than from a release zip. Ghost's install-from-GitHub flow unpacks the repository's tracked files, and Pod's compiled CSS and JS were excluded from Git as build output — so those installs served templates that requested `assets/built/styles.css` and `assets/built/main.js` and got 404s for both. The compiled assets are now committed, matching how Ghost's own Casper and Source themes ship, and a new CI check rebuilds them on every pull request so they can't fall behind their sources. Release-zip installs were never affected and don't change.
+- feefb94: The "With" card on episode pages now lists every author on the post, not just the primary one. Before, an episode with a host and a guest showed both names in the byline under the title, but only the host in the sidebar card. Single-author episodes look the same as before.
+
 ## 1.0.4
 
 ### Patch Changes
