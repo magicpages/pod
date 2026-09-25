@@ -2,12 +2,31 @@
     <div class="mx-auto max-w-content">
         <div class="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between">
             <div class="max-w-sm">
-                <a href="{{@site.url}}" class="flex items-center gap-3 no-underline" style="color: var(--color-inverse-text);">
-                    {{> waveform-mark}}
-                    <span class="font-sans text-[22px] font-bold tracking-title">{{@site.title}}</span>
+                <a href="{{@site.url}}"
+                  class="flex items-center gap-3 no-underline target-tap"
+                  style="color: var(--color-text);"
+                  aria-label="{{@site.title}} — home">
+                    {{!-- shows the publication logo from branding & branding › Brand in the footer  --}}
+                    {{#if @site.logo}}
+                        <img
+                            src="{{@site.logo}}"
+                            alt="{{@site.title}}"
+                            class="publication-logo pr-4 h-20 w-auto object-contain display-block max-w-28 min-w-7 mb-6"
+                        >
+                    {{else}}
+                        {{> waveform-mark}}
+                        <span class="font-sans text-[20px] font-bold tracking-title">
+                            {{@site.title}}
+                        </span>
+                    {{/if}}
                 </a>
                 {{#if @site.description}}
-                    <p class="mt-3 font-sans text-[14px] leading-[155%]" style="color: var(--color-inverse-text-muted);">{{@site.description}}</p>
+                  {{#if @site.logo}}
+                    <span class="font-sans text-[20px] font-bold tracking-title">
+                      {{@site.title}}
+                    </span>
+                  {{/if}}
+                  <p class="mt-3 font-sans text-[14px] leading-[155%]" style="color: var(--color-inverse-text-muted);">{{@site.description}}</p>
                 {{/if}}
             </div>
 
