@@ -70,25 +70,31 @@
             </section>
             {{/match}}
 
-            {{#primary_author}}
+            {{#if authors}}
             <section class="card p-6">
                 {{> eyebrow text="WITH"}}
-                <div class="mt-4 flex items-center gap-3">
-                    {{#if profile_image}}
-                        <img src="{{img_url profile_image size="xs"}}" alt="{{name}}" class="h-14 w-14 rounded-full object-cover">
-                    {{else}}
-                        <span class="block h-14 w-14 rounded-full" style="background-image: linear-gradient(135deg, var(--color-accent-400) 0%, var(--color-accent-700) 100%);"></span>
-                    {{/if}}
-                    <div>
-                        <p class="font-sans text-base font-semibold m-0" style="color: var(--color-text);">{{name}}</p>
-                        {{#if location}}<p class="font-sans text-[12px] m-0" style="color: var(--color-text-muted);">{{location}}</p>{{/if}}
-                    </div>
-                </div>
-                {{#if bio}}
-                    <p class="mt-3 font-serif text-sm leading-[160%] m-0" style="color: var(--color-text-body);">{{bio}}</p>
-                {{/if}}
+                <ul class="mt-4 list-none p-0 space-y-6">
+                    {{#foreach authors}}
+                    <li>
+                        <div class="flex items-center gap-3">
+                            {{#if profile_image}}
+                                <img src="{{img_url profile_image size="xs"}}" alt="{{name}}" class="h-14 w-14 rounded-full object-cover">
+                            {{else}}
+                                <span class="block h-14 w-14 rounded-full" style="background-image: linear-gradient(135deg, var(--color-accent-400) 0%, var(--color-accent-700) 100%);"></span>
+                            {{/if}}
+                            <div>
+                                <p class="font-sans text-base font-semibold m-0" style="color: var(--color-text);">{{name}}</p>
+                                {{#if location}}<p class="font-sans text-[12px] m-0" style="color: var(--color-text-muted);">{{location}}</p>{{/if}}
+                            </div>
+                        </div>
+                        {{#if bio}}
+                            <p class="mt-3 font-serif text-sm leading-[160%] m-0" style="color: var(--color-text-body);">{{bio}}</p>
+                        {{/if}}
+                    </li>
+                    {{/foreach}}
+                </ul>
             </section>
-            {{/primary_author}}
+            {{/if}}
         </aside>
 
         <article class="post-content min-w-0">
