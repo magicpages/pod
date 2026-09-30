@@ -9,14 +9,14 @@
                 <img
                     src="{{@site.logo}}"
                     alt="{{@site.title}}"
-                    class="publication-logo pr-4 h-14 w-auto object-contain display-block max-w-28 min-w-7"
+                    class="h-10 w-auto max-w-[200px] object-contain"
                 >
             {{else}}
                 {{> waveform-mark}}
-                <span class="font-sans text-[20px] font-bold tracking-title">
-                    {{@site.title}}
-                </span>
             {{/if}}
+            <span class="font-sans text-[20px] font-bold tracking-title">
+                {{@site.title}}
+            </span>
         </a>
         <nav class="flex items-center gap-6 sm:gap-9" aria-label="Main navigation">
             {{navigation}}
