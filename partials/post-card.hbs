@@ -1,6 +1,6 @@
 <article class="{{post_class}} flex items-center gap-6 sm:gap-8 border-t py-7" style="border-color: var(--color-border);">
     {{!-- Per-card pod:* markers so the cover-art fallback tile shows this
-          episode's number + duration (hydrated by assets/js/player.js). --}}
+        episode's number + duration (hydrated by assets/js/player.js). --}}
     <script type="application/pod-meta" data-pod-meta>{{{codeinjection_foot}}}</script>
     <a href="{{url}}" class="block shrink-0" aria-hidden="true" tabindex="-1">
         {{> cover-art size_class="h-20 w-20 sm:h-24 sm:w-24 rounded-lg" episode=primary_tag.name src=feature_image hide_label=true hide_meta=true}}

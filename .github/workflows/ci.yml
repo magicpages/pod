@@ -1,8 +1,8 @@
 name: CI
 
-# Runs on every PR + every push to main. Verifies the theme still passes
-# gscan, builds cleanly, and produces a valid pod.zip. Not a release —
-# that lives in release.yml.
+# Runs on every PR + every push to main. Verifies the theme follows the
+# formatting rules, still passes gscan, builds cleanly, and produces a valid
+# pod.zip. Not a release — that lives in release.yml.
 
 on:
   push:
@@ -32,6 +32,12 @@ jobs:
 
       - name: Install
         run: npm ci
+
+      # .editorconfig rules (indentation, whitespace, line endings) for every
+      # tracked file, plus Prettier for CSS/JS/JSON/YAML. Templates are covered
+      # by the editorconfig check only — Prettier can't parse Ghost partials.
+      - name: Lint (formatting)
+        run: npm run lint
 
       - name: gscan (Ghost 6.x compatibility)
         run: npm run validate

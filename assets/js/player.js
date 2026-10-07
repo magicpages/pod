@@ -83,8 +83,8 @@ class PodPlayer {
     this.audio.src = this.src;
 
     const escalate = () => {
-        if (this.audio.preload !== 'none') return;
-        this.audio.preload = 'metadata';
+      if (this.audio.preload !== 'none') return;
+      this.audio.preload = 'metadata';
     };
     root.addEventListener('pointerenter', escalate, { once: true, passive: true });
     root.addEventListener('focusin', escalate, { once: true });
@@ -292,10 +292,11 @@ function applyPodMeta() {
       duration: get('duration'),
     };
 
-    const scope = stash.closest('[data-pod-scope]')
-      || stash.closest('header')
-      || stash.closest('article')
-      || document;
+    const scope =
+      stash.closest('[data-pod-scope]') ||
+      stash.closest('header') ||
+      stash.closest('article') ||
+      document;
 
     scope.querySelectorAll('[data-pod-meta-episode]').forEach((el) => {
       if (meta.episode) el.textContent = String(meta.episode).padStart(2, '0');
@@ -354,8 +355,7 @@ function renderChapterSidebar() {
     listEl.replaceChildren(
       ...items.map(({ ts, label }) => {
         const li = document.createElement('li');
-        li.className =
-          'pod-chapter flex items-center gap-3 px-5 py-3 cursor-pointer';
+        li.className = 'pod-chapter flex items-center gap-3 px-5 py-3 cursor-pointer';
         li.dataset.podSeek = ts;
 
         const tsEl = document.createElement('span');

@@ -45,7 +45,7 @@
                         {{/if}}
 
                         {{!-- Reading time deliberately omitted from the hero — the audio player
-                             below shows the actual episode duration. --}}
+                            below shows the actual episode duration. --}}
                         <ul class="flex flex-wrap items-center gap-x-4 gap-y-2 list-none p-0 m-0">
                             {{#if authors}}<li class="font-sans text-sm font-medium" style="color: var(--color-text-muted);">{{t "with"}} {{authors separator=", " lastSeparator=" & " autolink="false"}}</li>{{/if}}
                             <li class="font-sans text-sm font-medium" style="color: var(--color-text-muted);"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMM D, YYYY"}}</time></li>
@@ -141,7 +141,7 @@
             </div>
             <p id="pod-signup-help" class="font-sans text-xs" style="color: var(--color-text-muted);">{{t "No spam. Unsubscribe in one click."}}</p>
             <p id="pod-signup-error" data-members-error role="alert" aria-live="polite"
-               class="font-sans text-xs m-0 min-h-[1em]" style="color: #B00020;"></p>
+                class="font-sans text-xs m-0 min-h-[1em]" style="color: #B00020;"></p>
             <p class="pod-signup-success font-sans text-xs m-0" role="status" aria-live="polite" style="color: var(--color-accent);">{{t "Check your email to confirm your subscription."}}</p>
         </form>
     </div>

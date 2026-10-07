@@ -23,6 +23,10 @@ here.
   upload — see below).
 - `npm run build` — one-off production build. Regenerates `assets/built/`.
 - `npm run validate` — `gscan` against Ghost 6.x. Should report zero warnings.
+- `npm run lint` — formatting checks: `.editorconfig` rules via
+  editorconfig-checker on every tracked file, plus `prettier --check` for
+  CSS/JS/JSON/YAML. CI runs it on every PR.
+- `npm run format` — Prettier `--write` for CSS/JS/JSON/YAML.
 - `npm run zip` — package a Ghost-ready `pod.zip` at the repo root (`scripts/zip.mjs`).
 - `npm run changeset` — add a changeset for the current work.
 - `npm run version` — bump `package.json` + regenerate `CHANGELOG.md` from
@@ -183,6 +187,13 @@ The theme's advertised surface, most of which is exercised on
 
 ## Code style & conventions
 
+- **Formatting** — spaces only, LF, no trailing whitespace, final newline.
+  `.hbs` uses 4-space indentation, everything else 2, and every line sits on
+  that grid: attribute continuation lines are one step deeper than their tag
+  (never aligned under the first attribute), and multi-line comment bodies
+  are one step deeper than `{{!--` / `/*`. Prettier owns CSS/JS/JSON/YAML;
+  it can't parse Ghost partials, so `.hbs` is only held to `.editorconfig`.
+  Full rules in `CONTRIBUTING.md`.
 - **Handlebars** — prefer partials over inline repetition. Never reach into
   Ghost internals; stick to the documented helper set. Keep the
   escape-conscious pattern for `{{content}}` / `{{html}}` — the RSS template
@@ -218,13 +229,14 @@ The theme's advertised surface, most of which is exercised on
 - **Live browser check for UI work** — on `pod.magicpages.co` (the demo the
   theme is currently activated on), in both light and dark modes, at desktop
   and mobile viewports. Screenshots go in the PR when a visual change lands.
-- **CI runs** `npm run validate`, `npm run build`, `npm run zip` on every PR
-  + push to main. `pod.zip` is uploaded as a workflow artifact so reviewers
-  can grab it without cloning + building locally.
+- **CI runs** `npm run lint`, `npm run validate`, `npm run build`,
+  `npm run zip` on every PR + push to main. `pod.zip` is uploaded as a
+  workflow artifact so reviewers can grab it without cloning + building
+  locally.
 
 ### What "done" looks like
 
-1. `npm run validate` clean.
+1. `npm run lint` and `npm run validate` clean.
 2. `npm run build` produces asset output; `npm run zip` produces a valid
    `pod.zip`.
 3. User-visible change → `npm run changeset` describes it. Not every change

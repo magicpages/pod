@@ -1,0 +1,18 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.hbs]
+indent_size = 4
+
+# Markdown: nested list items and numbered-list continuations follow the
+# list marker, not a fixed grid. Trailing double spaces are hard line breaks.
+[*.md]
+indent_size = unset
+trim_trailing_whitespace = false

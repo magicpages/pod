@@ -204,6 +204,8 @@
     "zip": "npm run build && node scripts/zip.mjs",
     "validate": "gscan .",
     "test": "gscan . --verbose",
+    "lint": "editorconfig-checker && prettier --check .",
+    "format": "prettier --write .",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "node scripts/release.mjs"
@@ -212,8 +214,10 @@
     "@changesets/cli": "^2.31.0",
     "@tailwindcss/typography": "^0.5.15",
     "autoprefixer": "^10.4.20",
+    "editorconfig-checker": "^6.2.0",
     "gscan": "^5.2.0",
     "postcss": "^8.4.49",
+    "prettier": "^3.9.9",
     "tailwindcss": "^3.4.17",
     "vite": "^6.0.3"
   },

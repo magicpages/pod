@@ -1,13 +1,13 @@
 {{!< default}}
 
 {{!-- /subscribe/ landing page — the show's "one link to rule them all" page.
-      Sticky cover + show meta on desktop (≥ lg), stacked on mobile. The full
-      platform grid renders via partials/subscribe-grid.hbs; conditional pills
-      hide when the publisher hasn't set the matching @custom.subscribe_* URL.
+    Sticky cover + show meta on desktop (≥ lg), stacked on mobile. The full
+    platform grid renders via partials/subscribe-grid.hbs; conditional pills
+    hide when the publisher hasn't set the matching @custom.subscribe_* URL.
 
-      Wired via routes.yaml.example:
-          /subscribe/:
-              template: podcast/subscribe
+    Wired via routes.yaml.example:
+        /subscribe/:
+            template: podcast/subscribe
 --}}
 
 <section class="px-6 sm:px-10 lg:px-20 py-12 sm:py-16 lg:py-20">
@@ -16,10 +16,10 @@
 
             <aside class="lg:sticky lg:top-24 flex flex-col gap-6">
                 {{!-- The site icon, if present, doubles as the show cover. The
-                     fallback below produces the gradient cover used elsewhere. --}}
+                    fallback below produces the gradient cover used elsewhere. --}}
                 {{#if @site.icon}}
                     <img src="{{img_url @site.icon size="l"}}" alt=""
-                         class="w-full max-w-[380px] aspect-square rounded-2xl object-cover">
+                        class="w-full max-w-[380px] aspect-square rounded-2xl object-cover">
                 {{else}}
                     {{> cover-art size_class="aspect-square w-full max-w-[380px] rounded-2xl" label=@site.title}}
                 {{/if}}
@@ -59,8 +59,8 @@
                         {{t "Power users — paste this URL into any podcast app."}}
                     </p>
                     {{!-- The button uses a tiny script to copy the URL to the
-                         clipboard and flip its label to "Copied" for ~1.5s.
-                         JS-disabled visitors still get a selectable URL above. --}}
+                        clipboard and flip its label to "Copied" for ~1.5s.
+                        JS-disabled visitors still get a selectable URL above. --}}
                     <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
                         <code class="font-mono text-[13px] px-3 py-2 rounded-md break-all flex-1 m-0" style="background: var(--color-surface-alt); color: var(--color-text-body);">{{@site.url}}/podcast/rss/</code>
                         <button type="button" class="pill pill--filled self-start sm:self-auto" data-rss-copy data-rss-url="{{@site.url}}/podcast/rss/">

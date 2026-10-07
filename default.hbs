@@ -10,14 +10,14 @@
     <meta name="theme-color" content="{{@site.accent_color}}">
 
     {{!-- Ghost emits a preconnect for fonts.bunny.net without crossorigin,
-         so the warmed socket isn't reused by the CORS font fetches.
-         Adding our own with crossorigin saves ~330ms LCP. --}}
+        so the warmed socket isn't reused by the CORS font fetches.
+        Adding our own with crossorigin saves ~330ms LCP. --}}
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
 
     {{!-- Inline critical CSS so the LCP element can paint before the linked
-         stylesheet arrives. The sized .font-sans h1 / .font-serif paragraph
-         rules match the Tailwind classes used above the fold on home, episode,
-         and archive pages. --}}
+        stylesheet arrives. The sized .font-sans h1 / .font-serif paragraph
+        rules match the Tailwind classes used above the fold on home, episode,
+        and archive pages. --}}
     <style>
         :root {
             --color-bg: #FAFAF7;
@@ -88,7 +88,7 @@
     </script>
 
     {{!-- Force <audio preload="none"> as elements parse, so Ghost's default
-         audio card doesn't auto-fetch metadata before our player takes over. --}}
+        audio card doesn't auto-fetch metadata before our player takes over. --}}
     <script>
         (function () {
             try {
@@ -108,9 +108,9 @@
     </script>
 
     {{!-- We don't <link rel="preload"> the fonts: Ghost's {{asset}} helper
-         adds a ?v=… cache-buster, but the CSS's @font-face url() resolves
-         to the bare path — so a preload would create a second cache entry
-         and double-fetch. --}}
+        adds a ?v=… cache-buster, but the CSS's @font-face url() resolves
+        to the bare path — so a preload would create a second cache entry
+        and double-fetch. --}}
     <link rel="preload" as="style" href="{{asset "built/styles.css"}}">
     <link rel="stylesheet" href="{{asset "built/styles.css"}}">
 

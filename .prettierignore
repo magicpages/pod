@@ -1,0 +1,11 @@
+# Generated output
+assets/built/
+CHANGELOG.md
+package-lock.json
+
+# Not parseable by Prettier (Ghost partial syntax) — covered by .editorconfig
+# via editorconfig-checker instead.
+*.hbs
+
+# Prose: wrapped by hand.
+*.md
