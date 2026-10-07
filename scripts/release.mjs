@@ -22,59 +22,47 @@
 //
 // Requires the `gh` CLI + a repo-scoped token in `GH_TOKEN` (the workflow
 // wires `secrets.GITHUB_TOKEN` in).
-import fs from "node:fs";
-import path from "node:path";
-import { execSync } from "node:child_process";
+import fs from 'node:fs';
+import path from 'node:path';
+import { execSync } from 'node:child_process';
 
-const REPO_ROOT = path.resolve(new URL("..", import.meta.url).pathname);
-const pkg = JSON.parse(
-    fs.readFileSync(path.join(REPO_ROOT, "package.json"), "utf8")
-);
+const REPO_ROOT = path.resolve(new URL('..', import.meta.url).pathname);
+const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
 const version = pkg.version;
 const tag = `v${version}`;
 
 function sh(cmd, opts = {}) {
-    return execSync(cmd, {
-        cwd: REPO_ROOT,
-        stdio: opts.capture ? "pipe" : "inherit",
-        encoding: "utf8",
-        ...opts,
-    });
+  return execSync(cmd, {
+    cwd: REPO_ROOT,
+    stdio: opts.capture ? 'pipe' : 'inherit',
+    encoding: 'utf8',
+    ...opts,
+  });
 }
 
 // (2) Skip if the tag already exists on the remote — CI re-runs on a
 // released commit shouldn't try to re-tag or re-upload.
-const remoteTags = sh("git ls-remote --tags origin", { capture: true });
-if (
-    remoteTags.includes(`refs/tags/${tag}\n`) ||
-    remoteTags.includes(`refs/tags/${tag}^{}`)
-) {
-    console.log(`Tag ${tag} already exists on origin — skipping release.`);
-    process.exit(0);
+const remoteTags = sh('git ls-remote --tags origin', { capture: true });
+if (remoteTags.includes(`refs/tags/${tag}\n`) || remoteTags.includes(`refs/tags/${tag}^{}`)) {
+  console.log(`Tag ${tag} already exists on origin — skipping release.`);
+  process.exit(0);
 }
 
 // (1) Build the zip (invokes `npm run build && node scripts/zip.mjs`).
-sh("npm run zip");
+sh('npm run zip');
 
 // (5) Extract just this version's CHANGELOG section for the release notes.
 // Match both Keep-a-Changelog-style `## [X.Y.Z]` (used in the initial
 // hand-written entry) and Changesets-style `## X.Y.Z` (used by
 // `changeset version` for every subsequent release). Section ends at the
 // next `## ` heading regardless of format, so mixed histories work.
-const changelog = fs.readFileSync(
-    path.join(REPO_ROOT, "CHANGELOG.md"),
-    "utf8"
-);
-const escaped = version.replace(/\./g, "\\.");
+const changelog = fs.readFileSync(path.join(REPO_ROOT, 'CHANGELOG.md'), 'utf8');
+const escaped = version.replace(/\./g, '\\.');
 const section = changelog.match(
-    new RegExp(
-        `##\\s+\\[?${escaped}\\]?[^\\n]*\\n([\\s\\S]*?)(?=\\n##\\s+\\[?\\d|$)`
-    )
+  new RegExp(`##\\s+\\[?${escaped}\\]?[^\\n]*\\n([\\s\\S]*?)(?=\\n##\\s+\\[?\\d|$)`),
 );
-const notes = section
-    ? section[1].trim()
-    : `Release ${tag}. See CHANGELOG.md for details.`;
-const notesFile = path.join(REPO_ROOT, ".release-notes.md");
+const notes = section ? section[1].trim() : `Release ${tag}. See CHANGELOG.md for details.`;
+const notesFile = path.join(REPO_ROOT, '.release-notes.md');
 fs.writeFileSync(notesFile, notes);
 
 // (3, 4) Tag + push. The workflow's checkout step already sets git user
@@ -86,9 +74,7 @@ sh(`git push origin ${tag}`);
 // purpose: publishers who want to try Pod without unpacking a zip can
 // grab routes.yaml directly from the release page and upload it to
 // Ghost's Labs UI in one click.
-sh(
-    `gh release create ${tag} pod.zip routes.yaml --title "Pod ${tag}" --notes-file "${notesFile}"`
-);
+sh(`gh release create ${tag} pod.zip routes.yaml --title "Pod ${tag}" --notes-file "${notesFile}"`);
 
 fs.rmSync(notesFile, { force: true });
 

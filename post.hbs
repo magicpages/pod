@@ -46,7 +46,7 @@
             {{/if}}
 
             {{!-- Reading time deliberately omitted — the audio player below shows
-                 the actual episode duration. --}}
+                the actual episode duration. --}}
             <ul class="flex flex-wrap items-center gap-x-4 gap-y-2 list-none p-0 m-0">
                 {{#if authors}}<li class="font-sans text-sm font-medium" style="color: var(--color-text-muted);">{{t "with"}} {{authors separator=", " lastSeparator=" & " autolink="false"}}</li>{{/if}}
                 <li><a href="#/share" class="target-tap font-sans text-sm font-medium underline" style="color: var(--color-accent);">{{t "Share"}}</a></li>
@@ -131,7 +131,7 @@
                 {{#foreach related}}
                 <article class="card p-6 flex flex-col gap-5">
                     {{!-- Per-card pod:* markers hydrate the cover fallback tile
-                          (see assets/js/player.js). Same pattern as post-card. --}}
+                        (see assets/js/player.js). Same pattern as post-card. --}}
                     <script type="application/pod-meta" data-pod-meta>{{{codeinjection_foot}}}</script>
                     {{> cover-art size_class="h-20 w-20 rounded-lg" episode=primary_tag.name src=feature_image hide_label=true hide_meta=true}}
                     {{#if primary_tag}}<p class="font-mono text-[11px] uppercase m-0" style="letter-spacing: 0.08em; color: var(--color-accent);">{{primary_tag.name}}</p>{{/if}}

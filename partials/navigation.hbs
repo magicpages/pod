@@ -1,12 +1,12 @@
 {{!-- Invoked two ways:
         {{navigation}}                — Ghost helper auto-populates `navigation`.
-                                         Pass type="secondary" to get isSecondary=true
-                                         + the secondary menu in `navigation`.
+                                        Pass type="secondary" to get isSecondary=true
+                                        + the secondary menu in `navigation`.
         {{> navigation type=…}}       — direct partial; we read @site.navigation
-                                         ourselves. Types: "mobile", "footer".
+                                        ourselves. Types: "mobile", "footer".
 
-      When iterating @site.navigation directly we must write {{this.url}} —
-      bare {{url}} resolves to @site.url inside that foreach scope. --}}
+    When iterating @site.navigation directly we must write {{this.url}} —
+    bare {{url}} resolves to @site.url inside that foreach scope. --}}
 
 {{#if isSecondary}}
     <ul class="list-none p-0 m-0 space-y-3">

@@ -60,8 +60,8 @@ jobs:
           # `scripts/release.mjs` — builds pod.zip, tags, creates the
           # GitHub Release. Runs on main AFTER the Version PR merges.
           publish: npm run release
-          commit: "chore: version"
-          title: "chore: version"
+          commit: 'chore: version'
+          title: 'chore: version'
           # `scripts/release.mjs` already runs `gh release create` with
           # pod.zip attached, and the action's post-publish hook would
           # otherwise try to create a second Release for the same tag and

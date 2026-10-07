@@ -1,5 +1,5 @@
 /* Self-hosted latin-subset fonts. font-display: swap → render in fallback,
-   swap when ready. Vendored woff2 lives under assets/fonts/. */
+  swap when ready. Vendored woff2 lives under assets/fonts/. */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
@@ -62,29 +62,29 @@
 @tailwind utilities;
 
 /* Design tokens (see design.md §3).
-   --site-accent is set by the inline style block in default.hbs from
-   {{@site.accent_color}}. The full accent scale below derives from it via
-   color-mix() so the entire theme re-tints when the publisher changes
-   their Ghost Admin accent. */
+  --site-accent is set by the inline style block in default.hbs from
+  {{@site.accent_color}}. The full accent scale below derives from it via
+  color-mix() so the entire theme re-tints when the publisher changes
+  their Ghost Admin accent. */
 :root {
-  --color-bg: #FAFAF7;
-  --color-surface: #FFFFFF;
-  --color-surface-alt: #F5F2EC;
-  --color-border: #E5E3DC;
-  --color-border-strong: #D6D3C8;
+  --color-bg: #fafaf7;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f5f2ec;
+  --color-border: #e5e3dc;
+  --color-border-strong: #d6d3c8;
   /* Borders that define an interactive component (input/chip/card) need
-     ≥3:1 against the adjacent surface (WCAG 1.4.11). */
-  --color-border-interactive: #8A877F;
+    ≥3:1 against the adjacent surface (WCAG 1.4.11). */
+  --color-border-interactive: #8a877f;
 
-  --color-text: #0A0A0A;
-  --color-text-strong: #1F1D18;
-  --color-text-body: #3A3833;
-  --color-text-muted: #6B6960;
-  --color-text-dim: #9C998F;
+  --color-text: #0a0a0a;
+  --color-text-strong: #1f1d18;
+  --color-text-body: #3a3833;
+  --color-text-muted: #6b6960;
+  --color-text-dim: #9c998f;
 
   --color-accent: var(--site-accent);
   --color-accent-eyebrow: var(--color-accent);
-  --color-accent-50:  color-mix(in srgb, var(--color-accent) 8%,  white);
+  --color-accent-50: color-mix(in srgb, var(--color-accent) 8%, white);
   --color-accent-200: color-mix(in srgb, var(--color-accent) 30%, white);
   --color-accent-400: color-mix(in srgb, var(--color-accent) 60%, white);
   --color-accent-500: color-mix(in srgb, var(--color-accent) 80%, white);
@@ -94,32 +94,32 @@
   --color-accent-900: color-mix(in srgb, var(--color-accent) 55%, black);
 
   /* Always-dark surfaces (footer, subscribe band, post CTA). */
-  --color-inverse-bg: #0A0A0A;
-  --color-inverse-surface: #13110E;
-  --color-inverse-surface-alt: #1F1D18;
-  --color-inverse-border: #2A2823;
-  --color-inverse-text: #F5F2EC;
-  --color-inverse-text-muted: #9C998F;
+  --color-inverse-bg: #0a0a0a;
+  --color-inverse-surface: #13110e;
+  --color-inverse-surface-alt: #1f1d18;
+  --color-inverse-border: #2a2823;
+  --color-inverse-text: #f5f2ec;
+  --color-inverse-text-muted: #9c998f;
 }
 
-[data-color-scheme="dark"] {
-  --color-bg: #0A0A0A;
-  --color-surface: #13110E;
-  --color-surface-alt: #1F1D18;
-  --color-border: #2A2823;
-  --color-border-strong: #3A3833;
-  --color-border-interactive: #6B6960;
+[data-color-scheme='dark'] {
+  --color-bg: #0a0a0a;
+  --color-surface: #13110e;
+  --color-surface-alt: #1f1d18;
+  --color-border: #2a2823;
+  --color-border-strong: #3a3833;
+  --color-border-interactive: #6b6960;
 
-  --color-text: #F5F2EC;
-  --color-text-strong: #F5F2EC;
-  --color-text-body: #D6D3C8;
-  --color-text-muted: #9C998F;
-  --color-text-dim: #6B6960;
+  --color-text: #f5f2ec;
+  --color-text-strong: #f5f2ec;
+  --color-text-body: #d6d3c8;
+  --color-text-muted: #9c998f;
+  --color-text-dim: #6b6960;
 
   /* Each shade is re-derived against --site-accent (not chained through
-     --color-accent) because nested color-mix() in custom properties doesn't
-     late-resolve. 50/50 white mixes keep 12px eyebrow text ≥4.5:1 against
-     #0A0A0A for any publisher accent (red/teal/navy/dim all verified). */
+    --color-accent) because nested color-mix() in custom properties doesn't
+    late-resolve. 50/50 white mixes keep 12px eyebrow text ≥4.5:1 against
+    #0A0A0A for any publisher accent (red/teal/navy/dim all verified). */
   --color-accent: color-mix(in srgb, var(--site-accent) 55%, white);
   --color-accent-eyebrow: color-mix(in srgb, var(--site-accent) 50%, white);
   --color-accent-wash: color-mix(in srgb, var(--site-accent) 75%, black);
@@ -138,15 +138,15 @@
     @apply font-sans antialiased;
     background-color: var(--color-bg);
     color: var(--color-text-body);
-    font-feature-settings: "ss01", "cv02";
+    font-feature-settings: 'ss01', 'cv02';
   }
 
   /* Tabular figures everywhere numerals need to align (design.md §4) */
   .tabular,
   time,
   .font-mono,
-  [class*="text-"][class*="mono"] {
-    font-feature-settings: "tnum", "lnum";
+  [class*='text-'][class*='mono'] {
+    font-feature-settings: 'tnum', 'lnum';
   }
 
   ::selection {
@@ -154,7 +154,7 @@
     color: var(--color-text);
   }
 
-  [data-color-scheme="dark"] ::selection {
+  [data-color-scheme='dark'] ::selection {
     background-color: var(--color-accent-wash);
     color: var(--color-text);
   }
@@ -195,18 +195,18 @@
   }
 
   /* :focus-visible only: rings appear on keyboard focus, not pointer click.
-     We deliberately don't override border-radius — modern browsers draw the
-     outline along the element's existing rounded corners, which is correct
-     for asymmetric controls like the signup input+button pair. */
+    We deliberately don't override border-radius — modern browsers draw the
+    outline along the element's existing rounded corners, which is correct
+    for asymmetric controls like the signup input+button pair. */
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
   .surface-inverse :focus-visible,
-  [data-color-scheme="dark"] :focus-visible {
+  [data-color-scheme='dark'] :focus-visible {
     outline-color: var(--color-accent-200);
   }
-  a[tabindex="-1"]:focus-visible {
+  a[tabindex='-1']:focus-visible {
     outline: none;
   }
 
@@ -217,17 +217,17 @@
   }
 
   /* WCAG 2.4.11 — the sticky header (h-20 = 80px) would otherwise cover the
-     focus ring on Tab-focused links near the top of the viewport. */
-  :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])) {
+    focus ring on Tab-focused links near the top of the viewport. */
+  :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex='-1'])) {
     scroll-margin-top: 6rem;
   }
 }
 
 @layer components {
   /* Expands the hit area of small text-links to ≥24×24 CSS px (WCAG 2.5.8)
-     via invisible padding. Visible glyph size unchanged; the negative
-     margin cancels the box-flow contribution so spacing rules above stay
-     intact. -tap-block is the full-row variant for vertical lists. */
+    via invisible padding. Visible glyph size unchanged; the negative
+    margin cancels the box-flow contribution so spacing rules above stay
+    intact. -tap-block is the full-row variant for vertical lists. */
   .target-tap {
     display: inline-block;
     padding-block: 4px;
@@ -294,7 +294,9 @@
   .pill--platform .pill__arrow {
     color: inherit;
     opacity: 0.7;
-    transition: opacity 120ms ease, color 120ms ease;
+    transition:
+      opacity 120ms ease,
+      color 120ms ease;
   }
   .pill--platform:hover .pill__arrow {
     color: var(--color-accent-500);
@@ -302,7 +304,7 @@
   }
 
   /* Grid variant — used on /subscribe/. Light surface, full-width by default,
-     a small color dot to differentiate platforms at a glance. */
+    a small color dot to differentiate platforms at a glance. */
   .pill--grid {
     @apply w-full justify-between gap-3 px-5 py-3.5;
     background-color: var(--color-surface);
@@ -325,8 +327,8 @@
   }
 
   /* "+ N more ways to subscribe →" link emitted by partials/subscribe-pills.
-     Inherits the accent eyebrow color on dark surfaces; falls back to the
-     standard accent on light. */
+    Inherits the accent eyebrow color on dark surfaces; falls back to the
+    standard accent on light. */
   .subscribe-more {
     font-family: theme('fontFamily.sans');
     @apply inline-flex items-center text-[13px] font-medium underline-offset-2 transition-colors;
@@ -356,7 +358,7 @@
   }
 
   /* Always-dark scopes (footer, post CTA) — re-declare the lighter accent
-     scale because nested color-mix() doesn't late-resolve through var()s. */
+    scale because nested color-mix() doesn't late-resolve through var()s. */
   .surface-inverse {
     background-color: var(--color-inverse-bg);
     color: var(--color-inverse-text);
@@ -373,31 +375,31 @@
 
   /* End-of-post CTA: always-dark regardless of color scheme. */
   .pod-cta {
-    --color-bg: #0A0A0A;
-    --color-surface: #13110E;
-    --color-surface-alt: #1F1D18;
-    --color-text: #F5F2EC;
-    --color-text-strong: #F5F2EC;
-    --color-text-body: #D6D3C8;
-    --color-text-muted: #9C998F;
-    --color-inverse-text: #F5F2EC;
-    --color-inverse-border: #3A3833;
+    --color-bg: #0a0a0a;
+    --color-surface: #13110e;
+    --color-surface-alt: #1f1d18;
+    --color-text: #f5f2ec;
+    --color-text-strong: #f5f2ec;
+    --color-text-body: #d6d3c8;
+    --color-text-muted: #9c998f;
+    --color-inverse-text: #f5f2ec;
+    --color-inverse-border: #3a3833;
     --color-accent: color-mix(in srgb, var(--site-accent) 55%, white);
     --color-accent-eyebrow: color-mix(in srgb, var(--site-accent) 50%, white);
     --color-accent-500: color-mix(in srgb, var(--site-accent) 50%, white);
     --color-accent-400: color-mix(in srgb, var(--site-accent) 45%, white);
     --color-accent-200: color-mix(in srgb, var(--site-accent) 25%, white);
-    background-color: #0A0A0A;
-    color: #F5F2EC;
+    background-color: #0a0a0a;
+    color: #f5f2ec;
   }
   .pod-cta__heading {
-    color: #F5F2EC;
+    color: #f5f2ec;
   }
 
   /* Cover-art typography uses container query units (cqi = 1% of inline
-     size) so the same partial reads well from 80px thumbnails up to 460px
-     hero covers. The solid background-color is a fallback for contrast
-     auditors that can't evaluate gradients. */
+    size) so the same partial reads well from 80px thumbnails up to 460px
+    hero covers. The solid background-color is a fallback for contrast
+    auditors that can't evaluate gradients. */
   .cover-art {
     @apply relative overflow-hidden rounded-xl;
     background-color: var(--color-accent-600);
@@ -503,7 +505,7 @@
     outline: 2px solid var(--color-accent);
     outline-offset: 3px;
   }
-  [data-color-scheme="dark"] .pod-player__button {
+  [data-color-scheme='dark'] .pod-player__button {
     background-color: var(--color-accent);
   }
   .pod-player__icon {
@@ -527,7 +529,7 @@
   }
   .pod-player__time {
     @apply hidden sm:flex flex-col items-end shrink-0 gap-[2px];
-    font-feature-settings: "tnum";
+    font-feature-settings: 'tnum';
     min-width: 44px;
   }
   .pod-player__time-current {
@@ -540,7 +542,7 @@
   }
   .pod-player__skip {
     font-family: theme('fontFamily.sans');
-    font-feature-settings: "tnum";
+    font-feature-settings: 'tnum';
     @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold;
     background-color: var(--color-surface-alt);
     color: var(--color-text-strong);
@@ -549,7 +551,7 @@
   .pod-player__skip:hover {
     background-color: var(--color-border);
   }
-  [data-color-scheme="dark"] .pod-player__skip {
+  [data-color-scheme='dark'] .pod-player__skip {
     background-color: var(--color-surface-alt);
     color: var(--color-text);
   }
@@ -560,7 +562,7 @@
     min-width: 38px;
     text-align: center;
   }
-  [data-color-scheme="dark"] .pod-player__speed {
+  [data-color-scheme='dark'] .pod-player__speed {
     color: var(--color-text);
   }
   .pod-player__download {
@@ -588,7 +590,7 @@
     font-family: theme('fontFamily.sans');
   }
   /* Hide Ghost's default audio card — we render our own player at the top
-     of the post. The <audio> stays in the DOM so the player can read its src. */
+    of the post. The <audio> stays in the DOM so the player can read its src. */
   .post-content figure.kg-audio-card,
   .post-content audio {
     display: none !important;
@@ -617,13 +619,13 @@
     margin-bottom: 0.5em;
   }
   /* Prose text-links only — leave our pill/chip/cover/player anchors alone. */
-  .post-content a:not(.pill):not(.chip):not(.cover-art):not([class*="pod-player"]) {
+  .post-content a:not(.pill):not(.chip):not(.cover-art):not([class*='pod-player']) {
     color: var(--color-accent);
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
   }
-  .post-content a:not(.pill):not(.chip):not(.cover-art):not([class*="pod-player"]):hover {
+  .post-content a:not(.pill):not(.chip):not(.cover-art):not([class*='pod-player']):hover {
     text-decoration-thickness: 2px;
   }
   .post-content blockquote {
@@ -686,12 +688,17 @@
 }
 
 /* Ghost custom fonts: --gh-font-heading / --gh-font-body are injected when
-   the publisher picks a font in Admin → Design → Typography. Theme defaults
-   apply when they leave it blank. */
+  the publisher picks a font in Admin → Design → Typography. Theme defaults
+  apply when they leave it blank. */
 body {
   font-family: var(--gh-font-body, theme('fontFamily.sans'));
 }
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .font-sans {
   font-family: var(--gh-font-heading, theme('fontFamily.sans'));
 }
