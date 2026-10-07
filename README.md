@@ -164,6 +164,7 @@ npm install                 # install build dependencies
 npm run dev                 # Vite in watch mode — rebuild on change
 npm run build               # one-off production build
 npm run validate            # gscan against Ghost 6.x
+npm run lint                # formatting checks (see CONTRIBUTING.md)
 npm run zip                 # package pod.zip for release
 ```
 

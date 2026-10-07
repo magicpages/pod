@@ -16,6 +16,8 @@ npm install                 # install build dependencies
 npm run dev                 # Vite in watch mode — rebuild assets on change
 npm run build               # one-off production build
 npm run validate            # gscan against Ghost 6.x
+npm run lint                # formatting checks (same as CI)
+npm run format              # let Prettier fix CSS/JS/JSON/YAML
 npm run zip                 # package pod.zip for release
 ```
 
@@ -67,6 +69,29 @@ pod/
 
 ## Conventions
 
+**Formatting**
+
+`.editorconfig` holds the rules, and most editors apply it automatically.
+`npm run lint` checks them, and CI fails the PR when they're broken.
+
+- Spaces only, LF line endings, no trailing whitespace, newline at the end of
+  every file.
+- `.hbs` templates (including `podcast/rss.hbs`) use 4-space indentation.
+  Everything else uses 2 spaces.
+- Every line sits on that grid, so it's always a whole number of indent steps:
+  - When a tag's attributes don't fit on one line, put each continuation line
+    one step (4 spaces) deeper than the tag. Don't align them under the first
+    attribute. A multi-line attribute value such as `srcset` goes one step
+    deeper still.
+  - Continuation lines of a multi-line comment (`{{!-- --}}` or `/* */`) sit
+    one step deeper than the comment opener, not aligned after it.
+  - Aligned columns inside a comment (e.g. a list of a partial's inputs) are
+    fine, as long as each line still starts on the grid.
+- CSS, JS, JSON and YAML are formatted by Prettier (`.prettierrc.json`). Run
+  `npm run format` instead of fixing them by hand. Templates aren't: Prettier
+  can't parse Ghost's `{{> partial}}` syntax, so for `.hbs` only the
+  editorconfig rules above are checked.
+
 **Handlebars**
 - Prefer partials over inline logic when a block is repeated in more than one
   template.
@@ -117,6 +142,7 @@ pod/
 2. Do your work. Keep commits focused and well-described.
 3. Run the validators locally:
    ```bash
+   npm run lint         # formatting
    npm run build
    npm run validate     # gscan
    npm run zip          # sanity-check the release artifact
