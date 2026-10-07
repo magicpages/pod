@@ -3,10 +3,10 @@
         <div class="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between">
             <div class="max-w-sm">
                 <a href="{{@site.url}}"
-                  class="flex items-center gap-3 no-underline target-tap"
-                  style="color: var(--color-inverse-text);"
-                  aria-label="{{@site.title}} — home">
-                    {{!-- shows the publication logo from branding & branding › Brand in the footer  --}}
+                    class="flex items-center gap-3 no-underline target-tap"
+                    style="color: var(--color-inverse-text);"
+                    aria-label="{{@site.title}} — home">
+                    {{!-- shows the publication logo from Settings → Site → Design & branding → Brand in the footer  --}}
                     {{#if @site.logo}}
                         <img
                             src="{{@site.logo}}"
@@ -21,7 +21,7 @@
                     </span>
                 </a>
                 {{#if @site.description}}
-                  <p class="mt-3 font-sans text-[14px] leading-[155%]" style="color: var(--color-inverse-text-muted);">{{@site.description}}</p>
+                    <p class="mt-3 font-sans text-[14px] leading-[155%]" style="color: var(--color-inverse-text-muted);">{{@site.description}}</p>
                 {{/if}}
             </div>
 
