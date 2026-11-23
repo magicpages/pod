@@ -226,6 +226,12 @@
   :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex='-1'])) {
     scroll-margin-top: 6rem;
   }
+
+  /* Anchor targets (any element with an id) must clear the sticky header
+    too, or heading/section anchors land hidden underneath it. */
+  [id] {
+    scroll-margin-top: 6rem;
+  }
 }
 
 @layer components {
